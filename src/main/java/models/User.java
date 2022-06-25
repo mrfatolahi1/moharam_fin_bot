@@ -1,5 +1,7 @@
 package models;
 
+import database.Loader;
+
 import java.util.ArrayList;
 
 public class User {
@@ -67,5 +69,31 @@ public class User {
 
     public void setTransactionsIDsList(ArrayList<Integer> transactionsIDsList) {
         this.transactionsIDsList = transactionsIDsList;
+    }
+
+    public long calculateBalance(){
+        ArrayList<Transaction> transactionsList = Loader.getUserTransactions(this);
+        long balance = 0;
+
+        for (Transaction transaction : transactionsList){
+            if (transaction.getType() == TransactionType.INCOME){
+                balance += transaction.getAmount();
+            } else {
+                balance -= transaction.getAmount();
+            }
+        }
+
+        return balance;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "آیدی: " + id + '\n' +
+                "نام: " + name + '\n' +
+                "نام‌کاربری تلگرام: " + "@" + username + '\n' +
+                "ایمیل: " + email + '\n' +
+                "شماره همراه: " + phoneNumber + '\n' +
+                "تراز مالی: " + calculateBalance();
     }
 }

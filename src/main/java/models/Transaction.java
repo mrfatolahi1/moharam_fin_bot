@@ -114,4 +114,30 @@ public class Transaction {
     public void setPersianDate(PersianDate persianDate) {
         this.persianDate = persianDate;
     }
+
+    public static String getPersianType(TransactionType type){
+        if (type == TransactionType.INCOME){
+            return "دادن بودجه به خدام";
+        }
+        return "خرج شده توسط خدام";
+    }
+
+    @Override
+    public String toString() {
+        return
+                "آیدی: " + id + '\n' +
+                        "کاربر: " + "@" +user.getUsername() + '\n' +
+                        "مبلغ: " + amount + '\n' +
+                        "کارمزد: " + fee + '\n' +
+                        "نوع: " + Transaction.getPersianType(type)
+                        + "\n" + "تاریخ: "
+                        + getPersianDate().getDay()
+                        + " " + PersianDate.getMonthNameByItNumber(getPersianDate().getMonth())
+                        + " " + getPersianDate().getYear()
+                        + "\n" + "زمان: "
+                        + getTime().getHour() + ":"
+                        + getTime().getMinute() + ":"
+                        + getTime().getSecond() + "\n"
+                        + "وضعیت تایید: " + isVerificated();
+    }
 }

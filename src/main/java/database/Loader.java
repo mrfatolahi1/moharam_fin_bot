@@ -7,8 +7,11 @@ import models.Transaction;
 import models.User;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Scanner;
 
 public class Loader {
     public static User loadUser(long userId) {
@@ -17,6 +20,18 @@ public class Loader {
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
         try {
             return objectMapper.readValue(new File("Database/Users/"+userId+".json"), User.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static User loadUser(String filePath) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+        try {
+            return objectMapper.readValue(new File(filePath), User.class);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -39,6 +54,40 @@ public class Loader {
         return transactionsList;
     }
 
+    public static ArrayList<Transaction> loadAllTransactions(){
+        ArrayList<Transaction> transactionsList = new ArrayList<>();
+        File directory=new File("Database/Transactions/");
+        int fileCount= Objects.requireNonNull(directory.list()).length;
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+
+        for (int i = 1 ; i <= fileCount ; i++){
+            try {
+                transactionsList.add(objectMapper.readValue(new File("Database/Transactions/"+i+".json"), Transaction.class));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return transactionsList;
+    }
+
+    public static ArrayList<Long> getAdminsIDs() {
+        try {
+            ArrayList<Long> adminsIDsList = new ArrayList<>();
+            Scanner scanner = new Scanner(new File("src/main/resources/Admins"));
+            while (scanner.hasNextLine()) {
+                adminsIDsList.add(Long.parseLong(scanner.nextLine()));
+            }
+
+            return adminsIDsList;
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 //    public static User loadUser(String username){
 //        int userId = 0;
 //        try {
@@ -54,6 +103,18 @@ public class Loader {
 //            return null;
 //        }
 //    }
+
+    public static ArrayList<User> loadAllUsers(){
+        ArrayList<User> usersList = new ArrayList<>();
+        File directory = new File("Database/Users");
+
+        for (String fileName : directory.list()){
+            String filePath = "Database/Users/" + fileName;
+            usersList.add(loadUser(filePath));
+        }
+
+        return usersList;
+    }
 
 //    private static int loadIdWithUsername(String userName) throws IOException, IOException {
 //        File file = new File("Database/Usernames/"+userName+".json");

@@ -40,27 +40,64 @@ public class Chat {
         if (estate == Estate.NOT_SIGNED_UP){
             sendSignUpError(update);
         } else
-
         if (estate == Estate.SIGNING_UP){
             signUp(update);
         } else
-
         if (estate == Estate.MAIN_MENU){
             handleMainMenuRequest(update);
         } else
-
         if (estate == Estate.ADDING_NEW_TRANSACTION){
-            addNewTransAction(update);
+            addNewTransaction(update);
+        } else
+        if (estate == Estate.ADMIN_PANEL){
+            handleAdminPanelRequest(update);
+        } else
+        if (estate == Estate.ADMIN_IS_ASKING_FOR_SOMEBODY_INFO){
+            showUserInfo(update);
+        } else
+        if (estate == Estate.ADMIN_IS_ADDING_NEW_TRANSACTION){
+            addNewTransactionWithAdmin(update);
         }
 
     }
 
     private void handleMainMenuRequest(Update update){
         if (update.getMessage().getText().equals("تراکنش جدید")){
-            showAddNewTransactionMessage(update);
+            showAddNewTransactionMessageForUser();
         } else
         if (update.getMessage().getText().equals("لیست تراکنش‌ها")){
             showUserTransactions(update);
+        } else
+        if (update.getMessage().getText().equals("پنل مدیریت")){
+            showAdminPanel(update);
+        }else {
+            showMainMenu(update);
+        }
+    }
+
+    private void handleAdminPanelRequest(Update update){
+        if (update.getMessage().getText().equals("لیست طلبکاران")){
+            showListOfCreditors();
+        } else
+        if (update.getMessage().getText().equals("لیست بدهکاران")){
+            showListOfDebtors();
+        } else
+        if (update.getMessage().getText().equals("لیست کاربران")){
+            showListOfAllUsers();
+        } else
+        if (update.getMessage().getText().equals("تراکنش‌های کاربر")){
+            requestWantedUserNumericID();
+        } else
+        if (update.getMessage().getText().equals("تراکنش جدید (دادن بودجه)")){
+            showAddNewTransactionMessageWithAdmin();
+        } else
+        if (update.getMessage().getText().equals("دیدن کل تراکنش‌ها")){
+            showAllTransactions();
+        } else
+        if (update.getMessage().getText().equals("بازگشت به منوی اصلی")){
+            showMainMenu(update);
+        } else {
+            showAdminPanel(update);
         }
     }
 
@@ -89,7 +126,6 @@ public class Chat {
 
         String messageText = "مشخصات شما با موفقیت در سامانه ثبت شد، حالا می‌توانید تراکنش‌های خود را ثبت کنید.";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-        estate = Estate.MAIN_MENU;
         try {
             mainController.sendMessageToUser(sendMessage);
         } catch (TelegramApiException e) {
@@ -110,17 +146,28 @@ public class Chat {
         keyboard.add(row);
         keyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(keyboardMarkup);
+        estate = Estate.MAIN_MENU;
         try {
-
             mainController.sendMessageToUser(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
 
-    private void showAddNewTransactionMessage(Update update){
+    private void showAddNewTransactionMessageForUser(){
         estate = Estate.ADDING_NEW_TRANSACTION;
         String messageText = "لطفا تصویر فاکتور را ارسال نموده و مبلغ کل را با ارقام انگلیسی به ریال در خط اول کپشن آن بنویسید. توضیحات مبلغ هزینه شده را در خط بعدی فاکتور بنویسید (این قسمت می‌تواند هر چقدر که لازم است زیاد باشد.)";
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showAddNewTransactionMessageWithAdmin(){
+        estate = Estate.ADMIN_IS_ADDING_NEW_TRANSACTION;
+        String messageText = "لطفا تصویر رسید را ارسال نموده و مبلغ کل را با ارقام انگلیسی به ریال در خط اول کپشن آن بنویسید. مبلغ کارمزد را با ارقام انگلیسی به ریال در خط دوم کپشن آن بنویسید. توضیحات مبلغ هزینه شده را در خط بعدی فاکتور بنویسید (این قسمت می‌تواند هر چقدر که لازم است زیاد باشد.)";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
         try {
             mainController.sendMessageToUser(sendMessage);
@@ -159,7 +206,44 @@ public class Chat {
         }
     }
 
-    private void addNewTransAction(Update update){
+    private void showAdminPanel(Update update){
+        if (!Loader.getAdminsIDs().contains(update.getMessage().getFrom().getId())){
+            String messageText = "شما به این قسمت دسترسی ندارید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), "پنل مدیریت:");
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row1 = new KeyboardRow();
+        KeyboardRow row2 = new KeyboardRow();
+        KeyboardRow row3 = new KeyboardRow();
+        row1.add("لیست طلبکاران");
+        row1.add("لیست بدهکاران");
+        row1.add("لیست کاربران");
+        row2.add("تراکنش‌های کاربر");
+        row2.add("تراکنش جدید (دادن بودجه)");
+        row2.add("دیدن کل تراکنش‌ها");
+        row3.add("بازگشت به منوی اصلی");
+        keyboard.add(row1);
+        keyboard.add(row2);
+        keyboard.add(row3);
+        keyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(keyboardMarkup);
+        estate = Estate.ADMIN_PANEL;
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addNewTransaction(Update update){
         Scanner scanner = new Scanner(update.getMessage().getCaption());
         String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
         long amount = Long.parseLong(scanner.nextLine());
@@ -175,6 +259,129 @@ public class Chat {
             e.printStackTrace();
         }
         estate = Estate.MAIN_MENU;
+    }
+
+    private void addNewTransactionWithAdmin(Update update){
+        Scanner scanner = new Scanner(update.getMessage().getCaption());
+        String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
+        long amount = Long.parseLong(scanner.nextLine());
+        int fee = Integer.parseInt(scanner.nextLine());
+        String description = scanner.nextLine();
+
+        Transaction transaction = new Transaction(this.user, amount, fee, description, TransactionType.INCOME, photoFileID);
+        Saver.saveTransaction(transaction);
+        String messageText = "تراکنش با موفقیت ثبت شد.";
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        estate = Estate.ADMIN_PANEL;
+        showAdminPanel(update);
+    }
+
+    private void showListOfCreditors(){
+        String messageText = "";
+        ArrayList<User> users = Loader.loadAllUsers();
+
+        for (User user : users){
+            if (user.calculateBalance() < 0){
+                messageText = messageText + user.toString() + "\n--------------------------\n";
+            }
+        }
+
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\n\nEND");
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showListOfDebtors(){
+        String messageText = "";
+        ArrayList<User> users = Loader.loadAllUsers();
+
+        for (User user : users){
+            if (user.calculateBalance() > 0){
+                messageText = messageText + user.toString() + "\n--------------------------\n";
+            }
+        }
+
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\n\nEND");
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showListOfAllUsers(){
+        String messageText = "";
+        ArrayList<User> users = Loader.loadAllUsers();
+
+        for (User user : users){
+            messageText = messageText + user.toString() + "\n--------------------------\n";
+        }
+
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\n\nEND");
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void requestWantedUserNumericID(){
+        String messageText = "آیدی عددی کاربر مورد نظر را وارد کنید:";
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+        estate = Estate.ADMIN_IS_ASKING_FOR_SOMEBODY_INFO;
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showUserInfo(Update update){
+        User loadedUser = Loader.loadUser(Long.parseLong(update.getMessage().getText()));
+        if (loadedUser != null){
+            String messageText = loadedUser.toString();
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\nEND");
+            estate = Estate.ADMIN_IS_ASKING_FOR_SOMEBODY_INFO;
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        } else {
+            String messageText = "کاربری با این آیدی یافت نشد، به پنل ادمین هدایت می‌شوید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
+        estate = Estate.ADMIN_PANEL;
+    }
+
+    private void showAllTransactions(){
+        ArrayList<Transaction> transactions = Loader.loadAllTransactions();
+        String messageText = "";
+
+        for (Transaction transaction : transactions){
+            messageText = messageText + transaction.toString() + "\n--------------------------\n";
+        }
+
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\n\nEND");
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public long getChatID() {
