@@ -1,0 +1,23 @@
+{
+  "id" : 11,
+  "user" : {
+    "id" : 103946103,
+    "name" : "ابراهیم تقوی",
+    "username" : "ebraaaaaaahim7",
+    "email" : "etebrahimt7@gmail.com",
+    "phoneNumber" : "09391511288",
+    "transactionsIDsList" : [ 11 ]
+  },
+  "amount" : 1223345667786543,
+  "fee" : 0,
+  "description" : "عالب",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAIBx2K3Y4g1EyeGbyAGoNyq6BHkD-uAAAJsujEb5qrBUVYdnwQG5GrPAQADAgADcwADKQQ",
+  "time" : [ 2022, 6, 26, 0, 5, 36, 882638000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 5
+  },
+  "verificated" : false
+}

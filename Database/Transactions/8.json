@@ -1,0 +1,23 @@
+{
+  "id" : 8,
+  "user" : {
+    "id" : 568026670,
+    "name" : "علی حاتمی",
+    "username" : "aaaa23434224",
+    "email" : "fatolahi.cs@gmail.com",
+    "phoneNumber" : "0000000000",
+    "transactionsIDsList" : [ 8 ]
+  },
+  "amount" : 90000,
+  "fee" : 1000,
+  "description" : "None",
+  "type" : "INCOME",
+  "factorImageFileId" : "AgACAgQAAxkBAAIBN2K3VbqHtwyNWQdxYCYZiARu3CyBAAJiujEbUeC4UfQ_T1oZchBkAQADAgADcwADKQQ",
+  "time" : [ 2022, 6, 25, 23, 6, 42, 528867000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 4
+  },
+  "verificated" : false
+}

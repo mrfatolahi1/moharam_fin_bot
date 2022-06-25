@@ -35,7 +35,12 @@ public class Chat {
     }
 
     public void handleNewUpdate(Update update){
-        System.out.println("this.estate = " + this.estate);
+        System.out.println("\nthis.estate = " + this.estate);
+        try {
+            System.out.println("update = " + update.getMessage().getText());
+        }catch (Exception ignored){
+            System.out.println("NO OOO");
+        }
 
         if (estate == Estate.NOT_SIGNED_UP){
             sendSignUpError(update);
@@ -52,8 +57,8 @@ public class Chat {
         if (estate == Estate.ADMIN_PANEL){
             handleAdminPanelRequest(update);
         } else
-        if (estate == Estate.ADMIN_IS_ASKING_FOR_SOMEBODY_INFO){
-            showUserInfo(update);
+        if (estate == Estate.ADMIN_IS_ASKING_FOR_SOMEBODYS_TRANSACTIONS){
+            showUserTransactions(Long.parseLong(update.getMessage().getText()));
         } else
         if (estate == Estate.ADMIN_IS_ADDING_NEW_TRANSACTION){
             addNewTransactionWithAdmin(update);
@@ -167,10 +172,17 @@ public class Chat {
 
     private void showAddNewTransactionMessageWithAdmin(){
         estate = Estate.ADMIN_IS_ADDING_NEW_TRANSACTION;
-        String messageText = "لطفا تصویر رسید را ارسال نموده و مبلغ کل را با ارقام انگلیسی به ریال در خط اول کپشن آن بنویسید. مبلغ کارمزد را با ارقام انگلیسی به ریال در خط دوم کپشن آن بنویسید. توضیحات مبلغ هزینه شده را در خط بعدی فاکتور بنویسید (این قسمت می‌تواند هر چقدر که لازم است زیاد باشد.)";
-        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+        String messageText1 = Loader.getUsersIDsList();
+        SendMessage sendMessage1 = new SendMessage(String.valueOf(chatID), messageText1);
         try {
-            mainController.sendMessageToUser(sendMessage);
+            mainController.sendMessageToUser(sendMessage1);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        String messageText2 = "لطفا تصویر رسید را ارسال نموده و اطلاعات زیر را هر یک در خطوط جداگانه ارسال کنید (اعداد با ارقام انگلیسی).\n\n[مبلغ کل به ریال]\n[مبلغ کارمزد رابه ریال]\n[آیدی عددی خادم مورد نظر با توجه به لیست بالا]\n[توضیحات مبلغ]";
+        SendMessage sendMessage2 = new SendMessage(String.valueOf(chatID), messageText2);
+        try {
+            mainController.sendMessageToUser(sendMessage2);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -199,6 +211,37 @@ public class Chat {
             messageText = messageText + transactionInfo + "\n\n";
         }
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\n\nEND");
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showUserTransactions(long userId){
+        ArrayList<Transaction> transactionsList = Loader.getUserTransactions(Loader.loadUser(userId));
+
+        String messageText = "";
+
+        for (Transaction transaction : transactionsList){
+            String transactionInfo = "";
+            transactionInfo = transactionInfo
+                    + "مبلغ: " + transaction.getAmount() + " " + "ریال"
+                    + "\n" + "تاریخ: "
+                    + transaction.getPersianDate().getDay()
+                    + " " + PersianDate.getMonthNameByItNumber(transaction.getPersianDate().getMonth())
+                    + " " + transaction.getPersianDate().getYear()
+                    + "\n" + "زمان: "
+                    + transaction.getTime().getHour() + ":"
+                    + transaction.getTime().getMinute() + ":"
+                    + transaction.getTime().getSecond() + "\n"
+                    + "وضعیت تایید: " + transaction.isVerificated()
+                    + "\n---------------------------";
+
+            messageText = messageText + transactionInfo + "\n\n";
+        }
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\n\nEND");
+        estate = Estate.ADMIN_PANEL;
         try {
             mainController.sendMessageToUser(sendMessage);
         } catch (TelegramApiException e) {
@@ -250,6 +293,8 @@ public class Chat {
         String description = scanner.nextLine();
 
         Transaction transaction = new Transaction(this.user, amount, 0, description, TransactionType.EXPENDITURE, photoFileID);
+        user.getTransactionsIDsList().add(transaction.getId());
+        Saver.saveUser(user);
         Saver.saveTransaction(transaction);
         String messageText = "تراکنش با موفقیت ثبت شد.";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
@@ -266,9 +311,12 @@ public class Chat {
         String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
         long amount = Long.parseLong(scanner.nextLine());
         int fee = Integer.parseInt(scanner.nextLine());
+        User user = Loader.loadUser(Long.parseLong(scanner.nextLine()));
         String description = scanner.nextLine();
 
         Transaction transaction = new Transaction(this.user, amount, fee, description, TransactionType.INCOME, photoFileID);
+        user.getTransactionsIDsList().add(transaction.getId());
+        Saver.saveUser(user);
         Saver.saveTransaction(transaction);
         String messageText = "تراکنش با موفقیت ثبت شد.";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
@@ -336,7 +384,7 @@ public class Chat {
     private void requestWantedUserNumericID(){
         String messageText = "آیدی عددی کاربر مورد نظر را وارد کنید:";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-        estate = Estate.ADMIN_IS_ASKING_FOR_SOMEBODY_INFO;
+        estate = Estate.ADMIN_IS_ASKING_FOR_SOMEBODYS_TRANSACTIONS;
         try {
             mainController.sendMessageToUser(sendMessage);
         } catch (TelegramApiException e) {
@@ -349,7 +397,7 @@ public class Chat {
         if (loadedUser != null){
             String messageText = loadedUser.toString();
             SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\nEND");
-            estate = Estate.ADMIN_IS_ASKING_FOR_SOMEBODY_INFO;
+            estate = Estate.ADMIN_IS_ASKING_FOR_SOMEBODYS_TRANSACTIONS;
             try {
                 mainController.sendMessageToUser(sendMessage);
             } catch (TelegramApiException e) {

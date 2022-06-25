@@ -1,0 +1,23 @@
+{
+  "id" : 10,
+  "user" : {
+    "id" : 625934411,
+    "name" : "احمدرضا سبزواری",
+    "username" : "AHMDSBZ",
+    "email" : "Sabzevarii313@gmail.con",
+    "phoneNumber" : "0901714991",
+    "transactionsIDsList" : [ 10 ]
+  },
+  "amount" : 5888,
+  "fee" : 0,
+  "description" : "‏با حریفان همه‌شب در ته یک پیرهن است",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAIBjmK3X83V1JVsPWW0aZvc7MU1IFJ_AAJzuDEbcSTBUQHJDo3sMMr5AQADAgADcwADKQQ",
+  "time" : [ 2022, 6, 25, 23, 49, 42, 212530000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 4
+  },
+  "verificated" : false
+}

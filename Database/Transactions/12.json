@@ -1,0 +1,23 @@
+{
+  "id" : 12,
+  "user" : {
+    "id" : 103946103,
+    "name" : "ابراهیم تقوی",
+    "username" : "ebraaaaaaahim7",
+    "email" : "etebrahimt7@gmail.com",
+    "phoneNumber" : "09391511288",
+    "transactionsIDsList" : [ 11 ]
+  },
+  "amount" : 98765443221,
+  "fee" : 0,
+  "description" : "پول زور",
+  "type" : "INCOME",
+  "factorImageFileId" : "AgACAgQAAxkBAAIB4GK3ZI15k1NtMkp86AQ0fRwERrZ9AAJsujEb5qrBUVYdnwQG5GrPAQADAgADcwADKQQ",
+  "time" : [ 2022, 6, 26, 0, 9, 57, 999256000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 5
+  },
+  "verificated" : false
+}

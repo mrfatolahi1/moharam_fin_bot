@@ -1,0 +1,23 @@
+{
+  "id" : 5,
+  "user" : {
+    "id" : 1354039598,
+    "name" : "امیرعباس محمدی",
+    "username" : "Amirabas_brj",
+    "email" : "amir10abas@gmail.com",
+    "phoneNumber" : "09013794556",
+    "transactionsIDsList" : [ 4, 5 ]
+  },
+  "amount" : 1000,
+  "fee" : 0,
+  "description" : "عالی تر",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAPuYrdHJNbcI2cxxJIQPejB_R2vtj0AArO5MRvSvLhRATP0wXeqy4MBAAMCAANzAAMpBA",
+  "time" : [ 2022, 6, 25, 22, 4, 34, 515270000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 4
+  },
+  "verificated" : false
+}

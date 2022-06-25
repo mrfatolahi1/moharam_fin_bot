@@ -14,19 +14,18 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Loader {
-    public static User loadUser(long userId) {
+    public synchronized static User loadUser(long userId) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
         try {
             return objectMapper.readValue(new File("Database/Users/"+userId+".json"), User.class);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
 
-    public static User loadUser(String filePath) {
+    public synchronized static User loadUser(String filePath) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
@@ -38,7 +37,7 @@ public class Loader {
         }
     }
 
-    public static ArrayList<Transaction> getUserTransactions(User user){
+    public synchronized static ArrayList<Transaction> getUserTransactions(User user){
         ArrayList<Transaction> transactionsList = new ArrayList<>();
         for (int transactionID : user.getTransactionsIDsList()){
             ObjectMapper objectMapper = new ObjectMapper();
@@ -54,7 +53,7 @@ public class Loader {
         return transactionsList;
     }
 
-    public static ArrayList<Transaction> loadAllTransactions(){
+    public synchronized static ArrayList<Transaction> loadAllTransactions(){
         ArrayList<Transaction> transactionsList = new ArrayList<>();
         File directory=new File("Database/Transactions/");
         int fileCount= Objects.requireNonNull(directory.list()).length;
@@ -73,7 +72,7 @@ public class Loader {
         return transactionsList;
     }
 
-    public static ArrayList<Long> getAdminsIDs() {
+    public synchronized static ArrayList<Long> getAdminsIDs() {
         try {
             ArrayList<Long> adminsIDsList = new ArrayList<>();
             Scanner scanner = new Scanner(new File("src/main/resources/Admins"));
@@ -104,7 +103,7 @@ public class Loader {
 //        }
 //    }
 
-    public static ArrayList<User> loadAllUsers(){
+    public synchronized static ArrayList<User> loadAllUsers(){
         ArrayList<User> usersList = new ArrayList<>();
         File directory = new File("Database/Users");
 
@@ -114,6 +113,17 @@ public class Loader {
         }
 
         return usersList;
+    }
+
+    public synchronized static String getUsersIDsList(){
+        ArrayList<User> usersList = Loader.loadAllUsers();
+        String output = "لیست خادمان به همراه آیدی‌های عددی آنان:\n\n";
+
+        for (User user : usersList){
+            output = output + user.getName() + ": " + user.getId() + "\n";
+        }
+
+        return output;
     }
 
 //    private static int loadIdWithUsername(String userName) throws IOException, IOException {

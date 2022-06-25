@@ -1,0 +1,23 @@
+{
+  "id" : 4,
+  "user" : {
+    "id" : 1354039598,
+    "name" : "امیرعباس محمدی",
+    "username" : "Amirabas_brj",
+    "email" : "amir10abas@gmail.com",
+    "phoneNumber" : "09013794556",
+    "transactionsIDsList" : [ ]
+  },
+  "amount" : 10000,
+  "fee" : 0,
+  "description" : "آقا عالی",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAPbYrdFH8b30gZ7S8CGmUrJV-_CHgIAArO5MRvSvLhRATP0wXeqy4MBAAMCAANzAAMpBA",
+  "time" : [ 2022, 6, 25, 21, 55, 52, 438584000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 4
+  },
+  "verificated" : false
+}

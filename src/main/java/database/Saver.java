@@ -12,7 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Saver {
-    public static void saveUser(User user) {
+    public synchronized static void saveUser(User user) {
         try {
             File folder = new File("Database/Users/" + user.getId() + ".json");
             if (!folder.exists()) {
@@ -31,7 +31,7 @@ public class Saver {
         }
     }
 
-    public static void saveTransaction(Transaction transaction){
+    public synchronized static void saveTransaction(Transaction transaction){
         try {
             File folder = new File("Database/Transactions/" + transaction.getId() + ".json");
             if (!folder.exists()) {
@@ -49,7 +49,7 @@ public class Saver {
         }
     }
 
-    private static void saveUsername(User user){
+    private synchronized static void saveUsername(User user){
         try {
             File folder = new File("Database/Usernames/" + user.getId() + ".json");
             if (!folder.exists()) {
