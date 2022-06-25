@@ -1,0 +1,22 @@
+{
+  "id" : 2,
+  "user" : {
+    "id" : 411069917,
+    "name" : "محمدرضا فتح‌اللهی",
+    "username" : "mrfatolahi1",
+    "email" : "fatolahi.cs@yahoo.com",
+    "phoneNumber" : "09182606160"
+  },
+  "amount" : 9000,
+  "fee" : 0,
+  "description" : "نه هزار تومان بابت چایی",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAOWYrborLAO-xSCJBmbfVYM7NWzTcMAAum4MRscvbFRFV61QW_PC2wBAAMCAANzAAMpBA",
+  "time" : [ 2022, 6, 25, 15, 21, 24, 742880000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 4
+  },
+  "verificated" : false
+}

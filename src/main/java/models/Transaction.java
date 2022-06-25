@@ -1,8 +1,13 @@
 package models;
 
+import net.time4j.calendar.PersianCalendar;
+
+import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Transaction {
+    private int id;
     private User user;
     private long amount;
     private int fee;
@@ -10,8 +15,15 @@ public class Transaction {
     private TransactionType type;
     private String factorImageFileId;
     private LocalDateTime time;
+    private PersianDate persianDate;
+    private boolean verificated;
+
+    public Transaction(){}
 
     public Transaction(User user, long amount, int fee, String description, TransactionType type, String factorImageFileId) {
+        File directory=new File("Database/Transactions/");
+        int fileCount= Objects.requireNonNull(directory.list()).length;
+        this.id = fileCount + 1;
         this.user = user;
         this.amount = amount;
         this.fee = fee;
@@ -19,22 +31,20 @@ public class Transaction {
         this.type = type;
         this.factorImageFileId = factorImageFileId;
         this.time = LocalDateTime.now();
+        this.verificated = false;
+        this.persianDate = PersianDate.now();
     }
 
-    public User getPerson() {
-        return user;
+    public int getId() {
+        return id;
     }
 
-    public void setPerson(User user) {
-        this.user = user;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public long getAmount() {
         return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
     }
 
     public int getFee() {
@@ -87,5 +97,21 @@ public class Transaction {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
+    }
+
+    public boolean isVerificated() {
+        return verificated;
+    }
+
+    public void setVerificated(boolean verificated) {
+        this.verificated = verificated;
+    }
+
+    public PersianDate getPersianDate() {
+        return persianDate;
+    }
+
+    public void setPersianDate(PersianDate persianDate) {
+        this.persianDate = persianDate;
     }
 }

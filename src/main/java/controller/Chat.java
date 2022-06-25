@@ -2,21 +2,16 @@ package controller;
 
 import database.Loader;
 import database.Saver;
+import models.PersianDate;
 import models.Transaction;
 import models.TransactionType;
 import models.User;
-import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.File;
-import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 
 public class Chat {
@@ -32,20 +27,18 @@ public class Chat {
         this.estate = Estate.NOT_SIGNED_UP;
     }
 
+    public Chat(MainController mainController, long chatID, User user, Estate estate) {
+        this.mainController = mainController;
+        this.chatID = chatID;
+        this.user = user;
+        this.estate = estate;
+    }
+
     public void handleNewUpdate(Update update){
         System.out.println("this.estate = " + this.estate);
 
         if (estate == Estate.NOT_SIGNED_UP){
-            User loadedUser = null;
-            try {
-                loadedUser = Loader.loadUser(update.getMessage().getFrom().getId());
-            }catch (FileNotFoundException fileNotFoundException){
-                sendSignUpError(update);
-                return;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            estate = Estate.MAIN_MENU;
+            sendSignUpError(update);
         } else
 
         if (estate == Estate.SIGNING_UP){
@@ -53,15 +46,22 @@ public class Chat {
         } else
 
         if (estate == Estate.MAIN_MENU){
-            if (update.getMessage().getText().equals("تراکنش جدید")){
-                showAddNewTransactionMessage(update);
-            }
+            handleMainMenuRequest(update);
         } else
 
         if (estate == Estate.ADDING_NEW_TRANSACTION){
             addNewTransAction(update);
         }
 
+    }
+
+    private void handleMainMenuRequest(Update update){
+        if (update.getMessage().getText().equals("تراکنش جدید")){
+            showAddNewTransactionMessage(update);
+        } else
+        if (update.getMessage().getText().equals("لیست تراکنش‌ها")){
+            showUserTransactions(update);
+        }
     }
 
     private void sendSignUpError(Update update){
@@ -129,6 +129,36 @@ public class Chat {
         }
     }
 
+    private void showUserTransactions(Update update){
+        ArrayList<Transaction> transactionsList = Loader.getUserTransactions(Loader.loadUser(update.getMessage().getFrom().getId()));
+
+        String messageText = "";
+
+        for (Transaction transaction : transactionsList){
+            String transactionInfo = "";
+            transactionInfo = transactionInfo
+                    + "مبلغ: " + transaction.getAmount() + " " + "ریال"
+                    + "\n" + "تاریخ: "
+                    + transaction.getPersianDate().getDay()
+                    + " " + PersianDate.getMonthNameByItNumber(transaction.getPersianDate().getMonth())
+                    + " " + transaction.getPersianDate().getYear()
+                    + "\n" + "زمان: "
+                    + transaction.getTime().getHour() + ":"
+                    + transaction.getTime().getMinute() + ":"
+                    + transaction.getTime().getSecond() + "\n"
+                    + "وضعیت تایید: " + transaction.isVerificated()
+                    + "\n---------------------------";
+
+            messageText = messageText + transactionInfo + "\n\n";
+        }
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\n\nEND");
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void addNewTransAction(Update update){
         Scanner scanner = new Scanner(update.getMessage().getCaption());
         String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
@@ -153,5 +183,21 @@ public class Chat {
 
     public User getPerson() {
         return user;
+    }
+
+    public MainController getMainController() {
+        return mainController;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Estate getEstate() {
+        return estate;
+    }
+
+    public void setEstate(Estate estate) {
+        this.estate = estate;
     }
 }

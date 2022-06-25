@@ -1,5 +1,6 @@
 package controller;
 
+import database.Loader;
 import models.User;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -49,18 +50,24 @@ public class MainController extends TelegramLongPollingBot{
 
     @Override
     public void onUpdateReceived(Update update) {
-        System.out.println(update);
+        System.out.println("update: " + update);
         (new Thread(() -> {
             long chatID = update.getMessage().getChatId();
             String username = update.getMessage().getFrom().getUserName();
             Chat chat = getChat(chatID);
             if (chat != null){
+                System.out.println("online chat");
                 chat.handleNewUpdate(update);
             } else
-            if (true) {
-                
+            if (Loader.loadUser(update.getMessage().getFrom().getId()) != null) {
+                System.out.println("saved chat");
+                Chat newChat = new Chat(MainController.this, chatID, Loader.loadUser(update.getMessage().getFrom().getId()), estate);
+                newChat.setEstate(Estate.MAIN_MENU);
+                chats.add(newChat);
+                newChat.handleNewUpdate(update);
             }else
             {
+                System.out.println("new user");
                 Chat newChat = new Chat(MainController.this, chatID, new User(update.getMessage().getFrom().getId(), null, username, null, null));
                 chats.add(newChat);
                 newChat.handleNewUpdate(update);
@@ -135,4 +142,5 @@ public class MainController extends TelegramLongPollingBot{
         }
         return "";
     }
+
 }

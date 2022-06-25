@@ -1,0 +1,22 @@
+{
+  "id" : 1,
+  "user" : {
+    "id" : 411069917,
+    "name" : "محمدرضا فتح‌اللهی",
+    "username" : "mrfatolahi1",
+    "email" : "fatolahi.cs@yahoo.com",
+    "phoneNumber" : "09182606160"
+  },
+  "amount" : 80000,
+  "fee" : 0,
+  "description" : "هشت هزار تومان بابت آبمیوه",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAOSYrbnqTo6NVyZhOutpkeScIuLUXUAAui4MRscvbFR-zr52UNHWSgBAAMCAANzAAMpBA",
+  "time" : [ 2022, 6, 25, 15, 17, 6, 392694000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 4
+  },
+  "verificated" : false
+}

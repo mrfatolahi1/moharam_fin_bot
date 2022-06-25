@@ -1,11 +1,16 @@
 package models;
 
+import java.util.ArrayList;
+
 public class User {
-    private final long id;
+    private long id;
     private String name;
     private String username;
     private String email;
     private String phoneNumber;
+    private ArrayList<Integer> transactionsIDsList;
+
+    public User() {}
 
     public User(long id, String name, String username, String email, String phoneNumber) {
         this.id = id;
@@ -13,6 +18,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.transactionsIDsList = new ArrayList<>();
     }
 
     public String getName() {
@@ -49,5 +55,17 @@ public class User {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public ArrayList<Integer> getTransactionsIDsList() {
+        return transactionsIDsList;
+    }
+
+    public void setTransactionsIDsList(ArrayList<Integer> transactionsIDsList) {
+        this.transactionsIDsList = transactionsIDsList;
     }
 }
