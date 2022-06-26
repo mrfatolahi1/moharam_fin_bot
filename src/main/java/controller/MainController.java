@@ -38,7 +38,6 @@ public class MainController extends TelegramLongPollingBot{
 
     @Override
     public void onUpdateReceived(Update update) {
-        System.out.println("update: " + update);
 //        if (update.getMessage().getText() == null || update.getMessage().getText() == ""){
 //            return;
 //        }

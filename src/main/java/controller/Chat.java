@@ -38,12 +38,18 @@ public class Chat {
     }
 
     public void handleNewUpdate(Update update){
+        System.out.println("\nname: "+user.getName());
         System.out.println("this.estate = " + this.estate);
         try {
             System.out.println("update = " + update.getMessage().getText());
         }catch (Exception ignored){
-            System.out.println("NO OOO");
+            try {
+                System.out.println("update = " + update.getMessage().getCaption());
+            }catch (Exception w){
+                System.out.println("NO TEXT");
+            }
         }
+        System.out.println();
 
         if (estate == Estate.NOT_SIGNED_UP){
             sendSignUpError(update);
@@ -449,10 +455,11 @@ public class Chat {
             return;
         }
 
-        Transaction transaction = new Transaction(this.user, Long.parseLong(cachedInfo.get(1)), Integer.parseInt(cachedInfo.get(2)), cachedInfo.get(3), TransactionType.INCOME, cachedInfo.get(0));
+        Transaction transaction = new Transaction(user, Long.parseLong(cachedInfo.get(1)), Integer.parseInt(cachedInfo.get(2)), cachedInfo.get(3), TransactionType.INCOME, cachedInfo.get(0));
         user.getTransactionsIDsList().add(transaction.getId());
         Saver.saveUser(user);
         Saver.saveTransaction(transaction);
+        cachedInfo.clear();
 
         String messageText = "تراکنش با موفقیت ثبت شد.";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
