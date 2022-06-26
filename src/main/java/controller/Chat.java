@@ -19,12 +19,14 @@ public class Chat {
     private final long chatID;
     private final User user;
     private Estate estate;
+    private final ArrayList<String> cachedInfo;
 
     public Chat(MainController mainController, long chatID, User user) {
         this.mainController = mainController;
         this.chatID = chatID;
         this.user = user;
         this.estate = Estate.NOT_SIGNED_UP;
+        this.cachedInfo = new ArrayList<>();
     }
 
     public Chat(MainController mainController, long chatID, User user, Estate estate) {
@@ -32,10 +34,11 @@ public class Chat {
         this.chatID = chatID;
         this.user = user;
         this.estate = estate;
+        this.cachedInfo = new ArrayList<>();
     }
 
     public void handleNewUpdate(Update update){
-        System.out.println("\nthis.estate = " + this.estate);
+        System.out.println("this.estate = " + this.estate);
         try {
             System.out.println("update = " + update.getMessage().getText());
         }catch (Exception ignored){
@@ -58,10 +61,13 @@ public class Chat {
             handleAdminPanelRequest(update);
         } else
         if (estate == Estate.ADMIN_IS_ASKING_FOR_SOMEBODYS_TRANSACTIONS){
-            showUserTransactions(Long.parseLong(update.getMessage().getText()));
+            showUserTransactionsInAdminPanel(update);
         } else
         if (estate == Estate.ADMIN_IS_ADDING_NEW_TRANSACTION){
-            addNewTransactionWithAdmin(update);
+            addNewTransactionWithAdmin1(update);
+        } else
+        if (estate == Estate.ADMIN_IS_ADDING_NEW_TRANSACTION_SENDING_USER_ID){
+            addNewTransactionWithAdmin2(update);
         }
 
     }
@@ -119,15 +125,26 @@ public class Chat {
     }
 
     private void signUp(Update update){
-        Scanner scanner = new Scanner(update.getMessage().getText());
-        String name = scanner.nextLine();
-        String phoneNumber = scanner.nextLine();
-        String email = scanner.nextLine();
-        String username = update.getMessage().getFrom().getUserName();
-        long userID = update.getMessage().getFrom().getId();
+        try{
+            Scanner scanner = new Scanner(update.getMessage().getText());
+            String name = scanner.nextLine();
+            String phoneNumber = scanner.nextLine();
+            String email = scanner.nextLine();
+            String username = update.getMessage().getFrom().getUserName();
+            long userID = update.getMessage().getFrom().getId();
 
-        User user = new User(userID, name, username, email, phoneNumber);
-        Saver.saveUser(user);
+            User user = new User(userID, name, username, email, phoneNumber);
+            Saver.saveUser(user);
+        }catch (Exception e){
+            String messageText = "فرمت مشخصات وارد شده صحیح نیست، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException q) {
+                e.printStackTrace();
+            }
+            return;
+        }
 
         String messageText = "مشخصات شما با موفقیت در سامانه ثبت شد، حالا می‌توانید تراکنش‌های خود را ثبت کنید.";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
@@ -161,8 +178,15 @@ public class Chat {
 
     private void showAddNewTransactionMessageForUser(){
         estate = Estate.ADDING_NEW_TRANSACTION;
-        String messageText = "لطفا تصویر فاکتور را ارسال نموده و مبلغ کل را با ارقام انگلیسی به ریال در خط اول کپشن آن بنویسید. توضیحات مبلغ هزینه شده را در خط بعدی فاکتور بنویسید (این قسمت می‌تواند هر چقدر که لازم است زیاد باشد.)";
+        String messageText = "لطفا تصویر فاکتور را ارسال نموده و اطلاعات خواسته شده را در خطوط جداگانه در کپشن آن بنویسید.\n\n[مبلغ به ریال با ارقام انگلیسی]\n[توضیحات]";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        row.add("انصراف");
+        keyboard.add(row);
+        keyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(keyboardMarkup);
         try {
             mainController.sendMessageToUser(sendMessage);
         } catch (TelegramApiException e) {
@@ -172,15 +196,16 @@ public class Chat {
 
     private void showAddNewTransactionMessageWithAdmin(){
         estate = Estate.ADMIN_IS_ADDING_NEW_TRANSACTION;
-        String messageText1 = Loader.getUsersIDsList();
-        SendMessage sendMessage1 = new SendMessage(String.valueOf(chatID), messageText1);
-        try {
-            mainController.sendMessageToUser(sendMessage1);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-        String messageText2 = "لطفا تصویر رسید را ارسال نموده و اطلاعات زیر را هر یک در خطوط جداگانه ارسال کنید (اعداد با ارقام انگلیسی).\n\n[مبلغ کل به ریال]\n[مبلغ کارمزد رابه ریال]\n[آیدی عددی خادم مورد نظر با توجه به لیست بالا]\n[توضیحات مبلغ]";
+
+        String messageText2 = "لطفا تصویر رسید را ارسال نموده و اطلاعات زیر را هر یک در خطوط جداگانه ارسال کنید (اعداد با ارقام انگلیسی).\n\n[مبلغ کل به ریال]\n[مبلغ کارمزد رابه ریال]\n[توضیحات مبلغ]";
         SendMessage sendMessage2 = new SendMessage(String.valueOf(chatID), messageText2);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        row.add("انصراف");
+        keyboard.add(row);
+        keyboardMarkup.setKeyboard(keyboard);
+        sendMessage2.setReplyMarkup(keyboardMarkup);
         try {
             mainController.sendMessageToUser(sendMessage2);
         } catch (TelegramApiException e) {
@@ -218,8 +243,42 @@ public class Chat {
         }
     }
 
-    private void showUserTransactions(long userId){
-        ArrayList<Transaction> transactionsList = Loader.getUserTransactions(Loader.loadUser(userId));
+    private void showUserTransactionsInAdminPanel(Update update){
+        if (update.getMessage().getText() != null){
+            if (update.getMessage().getText().equals("انصراف")) {
+                showAdminPanel(update);
+                return;
+            }
+        }
+        String userId = update.getMessage().getText();
+        long longId = 0;
+        User user = null;
+        try {
+            longId = Long.parseLong(userId);
+            user = Loader.loadUser(longId);
+        } catch (Exception e){
+            String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+            estate = Estate.ADMIN_IS_ASKING_FOR_SOMEBODYS_TRANSACTIONS;
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException q) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        if (user == null){
+            String messageText = "کاربری با این مشخصات پیدا نشد، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+            estate = Estate.ADMIN_IS_ASKING_FOR_SOMEBODYS_TRANSACTIONS;
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        ArrayList<Transaction> transactionsList = Loader.getUserTransactions(Loader.loadUser(longId));
 
         String messageText = "";
 
@@ -241,12 +300,12 @@ public class Chat {
             messageText = messageText + transactionInfo + "\n\n";
         }
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText+"\n\nEND");
-        estate = Estate.ADMIN_PANEL;
         try {
             mainController.sendMessageToUser(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+        showAdminPanel(update);
     }
 
     private void showAdminPanel(Update update){
@@ -287,15 +346,32 @@ public class Chat {
     }
 
     private void addNewTransaction(Update update){
-        Scanner scanner = new Scanner(update.getMessage().getCaption());
-        String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
-        long amount = Long.parseLong(scanner.nextLine());
-        String description = scanner.nextLine();
+        if (update.getMessage().getText() != null){
+            if (update.getMessage().getText().equals("انصراف")) {
+                showMainMenu(update);
+                return;
+            }
+        }
+        try {
+            Scanner scanner = new Scanner(update.getMessage().getCaption());
+            String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
+            long amount = Long.parseLong(scanner.nextLine());
+            String description = scanner.nextLine();
 
-        Transaction transaction = new Transaction(this.user, amount, 0, description, TransactionType.EXPENDITURE, photoFileID);
-        user.getTransactionsIDsList().add(transaction.getId());
-        Saver.saveUser(user);
-        Saver.saveTransaction(transaction);
+            Transaction transaction = new Transaction(this.user, amount, 0, description, TransactionType.EXPENDITURE, photoFileID);
+            user.getTransactionsIDsList().add(transaction.getId());
+            Saver.saveUser(user);
+            Saver.saveTransaction(transaction);
+        } catch (Exception e){
+            String messageText = "فرمت مشخصات وارد شده صحیح نیست، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException q) {
+                e.printStackTrace();
+            }
+            return;
+        }
         String messageText = "تراکنش با موفقیت ثبت شد.";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
         try {
@@ -303,21 +379,81 @@ public class Chat {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        estate = Estate.MAIN_MENU;
+        showMainMenu(update);
     }
 
-    private void addNewTransactionWithAdmin(Update update){
-        Scanner scanner = new Scanner(update.getMessage().getCaption());
-        String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
-        long amount = Long.parseLong(scanner.nextLine());
-        int fee = Integer.parseInt(scanner.nextLine());
-        User user = Loader.loadUser(Long.parseLong(scanner.nextLine()));
-        String description = scanner.nextLine();
+    private void addNewTransactionWithAdmin1(Update update){
+        if (update.getMessage().getText() != null){
+            if (update.getMessage().getText().equals("انصراف")) {
+                showAdminPanel(update);
+                return;
+            }
+        }
+        try {
+            Scanner scanner = new Scanner(update.getMessage().getCaption());
+            String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
+            long amount = Long.parseLong(scanner.nextLine());
+            int fee = Integer.parseInt(scanner.nextLine());
+            String description = scanner.nextLine();
 
-        Transaction transaction = new Transaction(this.user, amount, fee, description, TransactionType.INCOME, photoFileID);
+            cachedInfo.add(photoFileID);
+            cachedInfo.add(String.valueOf(amount));
+            cachedInfo.add(String.valueOf(fee));
+            cachedInfo.add(description);
+        } catch (Exception e){
+            String messageText = "فرمت مشخصات وارد شده صحیح نیست، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException q) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        requestWantedTransactionUserNumericID();
+    }
+
+    private void addNewTransactionWithAdmin2(Update update){
+        if (update.getMessage().getText() != null){
+            if (update.getMessage().getText().equals("انصراف")) {
+                showAdminPanel(update);
+                return;
+            }
+        }
+        String userId = update.getMessage().getText();
+        long longId = 0;
+        User user = null;
+        try {
+            longId = Long.parseLong(userId);
+            user = Loader.loadUser(longId);
+        } catch (Exception e){
+            String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+            estate = Estate.ADMIN_IS_ADDING_NEW_TRANSACTION_SENDING_USER_ID;
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException q) {
+                e.printStackTrace();
+            }
+            return;
+        }
+        if (user == null){
+            String messageText = "کاربری با این مشخصات پیدا نشد، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+            estate = Estate.ADMIN_IS_ADDING_NEW_TRANSACTION_SENDING_USER_ID;
+            try {
+                mainController.sendMessageToUser(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        Transaction transaction = new Transaction(this.user, Long.parseLong(cachedInfo.get(1)), Integer.parseInt(cachedInfo.get(2)), cachedInfo.get(3), TransactionType.INCOME, cachedInfo.get(0));
         user.getTransactionsIDsList().add(transaction.getId());
         Saver.saveUser(user);
         Saver.saveTransaction(transaction);
+
         String messageText = "تراکنش با موفقیت ثبت شد.";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
         try {
@@ -325,7 +461,7 @@ public class Chat {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-        estate = Estate.ADMIN_PANEL;
+
         showAdminPanel(update);
     }
 
@@ -382,9 +518,49 @@ public class Chat {
     }
 
     private void requestWantedUserNumericID(){
-        String messageText = "آیدی عددی کاربر مورد نظر را وارد کنید:";
+        estate = Estate.ADMIN_IS_ADDING_NEW_TRANSACTION;
+        String messageText1 = Loader.getUsersIDsList();
+        SendMessage sendMessage1 = new SendMessage(String.valueOf(chatID), messageText1);
+        try {
+            mainController.sendMessageToUser(sendMessage1);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        String messageText = "آیدی عددی کاربر مورد نظر را وارد کنید (با استفاده از لیست بالا):";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        row.add("انصراف");
+        keyboard.add(row);
+        keyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(keyboardMarkup);
         estate = Estate.ADMIN_IS_ASKING_FOR_SOMEBODYS_TRANSACTIONS;
+        try {
+            mainController.sendMessageToUser(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void requestWantedTransactionUserNumericID(){
+        estate = Estate.ADMIN_IS_ADDING_NEW_TRANSACTION_SENDING_USER_ID;
+        String messageText1 = Loader.getUsersIDsList();
+        SendMessage sendMessage1 = new SendMessage(String.valueOf(chatID), messageText1);
+        try {
+            mainController.sendMessageToUser(sendMessage1);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+        String messageText = "آیدی عددی کاربر مورد نظر را وارد کنید (با استفاده از لیست بالا):";
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        row.add("انصراف");
+        keyboard.add(row);
+        keyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(keyboardMarkup);
         try {
             mainController.sendMessageToUser(sendMessage);
         } catch (TelegramApiException e) {

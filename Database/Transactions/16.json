@@ -1,0 +1,23 @@
+{
+  "id" : 16,
+  "user" : {
+    "id" : 568026670,
+    "name" : "علی حاتمی",
+    "username" : "aaaa23434224",
+    "email" : "fffff@gmail.com",
+    "phoneNumber" : "00000000",
+    "transactionsIDsList" : [ 14, 15 ]
+  },
+  "amount" : 10000,
+  "fee" : 10,
+  "description" : "EEE",
+  "type" : "INCOME",
+  "factorImageFileId" : "AgACAgQAAxkBAAIC42K4EZGgiZUW_wJISqpq7r41WO4iAAIQvDEbUeDAUTmJZVt5p-5aAQADAgADcwADKQQ",
+  "time" : [ 2022, 6, 26, 12, 28, 23, 442735000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 5
+  },
+  "verificated" : false
+}
