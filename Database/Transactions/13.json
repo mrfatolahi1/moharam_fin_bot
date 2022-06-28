@@ -11,7 +11,7 @@
   "amount" : 1000,
   "fee" : 1111,
   "description" : "fgrgrg",
-  "type" : "INCOME",
+  "type" : "GIVE_TO_USERS",
   "factorImageFileId" : "AgACAgQAAxkBAAIB9GK3ZhdZQ_jCDr8KLrav4s0XmTT8AAKzuTEb0ry4UQEz9MF3qsuDAQADAgADcwADKQQ",
   "time" : [ 2022, 6, 26, 0, 16, 32, 722541000 ],
   "persianDate" : {
@@ -19,5 +19,7 @@
     "month" : 4,
     "day" : 5
   },
-  "verificated" : false
+  "verificated" : false,
+  "adminDescription" : "",
+  "hasPaperInvoice" : false
 }

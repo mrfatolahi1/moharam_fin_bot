@@ -120,10 +120,23 @@ public class Loader {
         String output = "لیست خادمان به همراه آیدی‌های عددی آنان:\n\n";
 
         for (User user : usersList){
+            if (user.getName() == null){
+                continue;
+            }
             output = output + user.getName() + ": " + user.getId() + "\n";
         }
 
         return output;
+    }
+
+    public static void updateUserFromDatabase(User user){
+        User loadedUser = Loader.loadUser(user.getId());
+
+        user.setName(loadedUser.getName());
+        user.setUsername(loadedUser.getUsername());
+        user.setEmail(loadedUser.getEmail());
+        user.setPhoneNumber(loadedUser.getPhoneNumber());
+        user.setTransactionsIDsList(loadedUser.getTransactionsIDsList());
     }
 
 //    private static int loadIdWithUsername(String userName) throws IOException, IOException {

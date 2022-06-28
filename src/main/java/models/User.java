@@ -1,5 +1,4 @@
 package models;
-
 import database.Loader;
 
 import java.util.ArrayList;

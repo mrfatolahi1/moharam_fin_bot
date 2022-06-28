@@ -11,7 +11,7 @@
   "amount" : 10000,
   "fee" : 10,
   "description" : "EEE",
-  "type" : "INCOME",
+  "type" : "GIVE_TO_USERS",
   "factorImageFileId" : "AgACAgQAAxkBAAIDDGK4FAu_DwQuIszS7-i7RBx4IsZZAAIQvDEbUeDAUTmJZVt5p-5aAQADAgADcwADKQQ",
   "time" : [ 2022, 6, 26, 12, 38, 48, 708088000 ],
   "persianDate" : {
@@ -19,5 +19,7 @@
     "month" : 4,
     "day" : 5
   },
-  "verificated" : false
+  "verificated" : false,
+  "adminDescription" : "",
+  "hasPaperInvoice" : false
 }

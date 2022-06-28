@@ -11,7 +11,7 @@
   "amount" : 90000,
   "fee" : 1000,
   "description" : "None",
-  "type" : "INCOME",
+  "type" : "GIVE_TO_USERS",
   "factorImageFileId" : "AgACAgQAAxkBAAIBN2K3VbqHtwyNWQdxYCYZiARu3CyBAAJiujEbUeC4UfQ_T1oZchBkAQADAgADcwADKQQ",
   "time" : [ 2022, 6, 25, 23, 6, 42, 528867000 ],
   "persianDate" : {
@@ -19,5 +19,7 @@
     "month" : 4,
     "day" : 4
   },
-  "verificated" : false
+  "verificated" : false,
+  "adminDescription" : "",
+  "hasPaperInvoice" : false
 }

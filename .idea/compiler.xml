@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="moharam_fin_bot" options="--add-modules java.base" />
+      <module name="moharam_fin_bot" options="" />
     </option>
   </component>
 </project>

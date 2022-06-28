@@ -19,5 +19,7 @@
     "month" : 4,
     "day" : 5
   },
-  "verificated" : false
+  "verificated" : false,
+  "adminDescription" : "",
+  "hasPaperInvoice" : false
 }

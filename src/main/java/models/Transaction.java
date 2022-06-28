@@ -12,11 +12,13 @@ public class Transaction {
     private long amount;
     private int fee;
     private String description;
+    private String adminDescription;
     private TransactionType type;
     private String factorImageFileId;
     private LocalDateTime time;
     private PersianDate persianDate;
     private boolean verificated;
+    private boolean hasPaperInvoice;
 
     public Transaction(){}
 
@@ -33,6 +35,8 @@ public class Transaction {
         this.time = LocalDateTime.now();
         this.verificated = false;
         this.persianDate = PersianDate.now();
+        this.adminDescription = "";
+        this.hasPaperInvoice = false;
     }
 
     public int getId() {
@@ -115,8 +119,24 @@ public class Transaction {
         this.persianDate = persianDate;
     }
 
+    public String getAdminDescription() {
+        return adminDescription;
+    }
+
+    public void setAdminDescription(String adminDescription) {
+        this.adminDescription = adminDescription;
+    }
+
+    public boolean isHasPaperInvoice() {
+        return hasPaperInvoice;
+    }
+
+    public void setHasPaperInvoice(boolean hasPaperInvoice) {
+        this.hasPaperInvoice = hasPaperInvoice;
+    }
+
     public static String getPersianType(TransactionType type){
-        if (type == TransactionType.INCOME){
+        if (type == TransactionType.EXPENDITURE){
             return "دادن بودجه به خدام";
         }
         return "خرج شده توسط خدام";
@@ -138,6 +158,9 @@ public class Transaction {
                         + getTime().getHour() + ":"
                         + getTime().getMinute() + ":"
                         + getTime().getSecond() + "\n"
-                        + "وضعیت تایید: " + isVerificated();
+                        + "وضعیت تایید: " + isVerificated() + "\n"
+                        + "دارای فاکتور کاغذی: " + isHasPaperInvoice() + "\n"
+                        + "توضیحات: " + description + "\n"
+                        + "توضیحات مدیر: " +adminDescription;
     }
 }

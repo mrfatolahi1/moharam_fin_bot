@@ -63,14 +63,12 @@ public class MainController extends TelegramLongPollingBot{
                 newChat.handleNewUpdate(update);
             }
         })).start();
-
-
-
     }
 
-    public void sendMessageToUser(Object object) throws TelegramApiException {
+    public synchronized void sendMessageToUser(Object object) throws TelegramApiException {
 
         if (object.getClass() == SendMessage.class){
+            System.out.println("((SendMessage) object).getText().length() = " + ((SendMessage) object).getText().length());
             execute((SendMessage) object);
         } else
         if (object.getClass() == SendPhoto.class){
