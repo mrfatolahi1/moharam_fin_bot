@@ -1,0 +1,23 @@
+{
+  "id" : 20,
+  "user" : {
+    "id" : 411069917,
+    "name" : "محمدرضا فتح‌اللهی",
+    "username" : "mrfatolahi1",
+    "email" : "fatolahi.cs@yahoo.com",
+    "phoneNumber" : "09182606160",
+    "transactionsIDsList" : [ 1, 2, 8, 9, 16, 20 ]
+  },
+  "amount" : 1000,
+  "fee" : 0,
+  "description" : "سیدسهیل",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAIDn2K5lKu1_iyhxaO2ZYZKMQzttcweAALtuTEbRvrRUXE5XSM2hD33AQADAgADcwADKQQ",
+  "time" : [ 2022, 6, 27, 15, 59, 48, 142154000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 6
+  },
+  "verificated" : false
+}

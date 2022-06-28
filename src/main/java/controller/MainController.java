@@ -46,18 +46,18 @@ public class MainController extends TelegramLongPollingBot{
             String username = update.getMessage().getFrom().getUserName();
             Chat chat = getChat(chatID);
             if (chat != null){
-                System.out.println("online chat");
+                System.out.println("\nonline chat");
                 chat.handleNewUpdate(update);
             } else
             if (Loader.loadUser(update.getMessage().getFrom().getId()) != null) {
-                System.out.println("saved chat");
+                System.out.println("\nsaved chat");
                 Chat newChat = new Chat(MainController.this, chatID, Loader.loadUser(update.getMessage().getFrom().getId()), estate);
                 newChat.setEstate(Estate.MAIN_MENU);
                 chats.add(newChat);
                 newChat.handleNewUpdate(update);
             }else
             {
-                System.out.println("new user");
+                System.out.println("\nnew user");
                 Chat newChat = new Chat(MainController.this, chatID, new User(update.getMessage().getFrom().getId(), null, username, null, null));
                 chats.add(newChat);
                 newChat.handleNewUpdate(update);

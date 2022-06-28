@@ -1,0 +1,23 @@
+{
+  "id" : 19,
+  "user" : {
+    "id" : 730247586,
+    "name" : null,
+    "username" : "aaaaalllliii",
+    "email" : null,
+    "phoneNumber" : null,
+    "transactionsIDsList" : [ 19 ]
+  },
+  "amount" : 50000,
+  "fee" : 0,
+  "description" : "خرید کتاب",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAIDlmK5lIjxLzgbWtvNjjUrlYmrQ7OUAAIquTEbrDjQUYSs7BUHYyD4AQADAgADcwADKQQ",
+  "time" : [ 2022, 6, 27, 15, 59, 12, 898474000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 6
+  },
+  "verificated" : false
+}

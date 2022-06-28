@@ -38,7 +38,7 @@ public class Chat {
     }
 
     public void handleNewUpdate(Update update){
-        System.out.println("\nname: "+user.getName());
+        System.out.println("name: "+user.getName());
         System.out.println("this.estate = " + this.estate);
         try {
             System.out.println("update = " + update.getMessage().getText());
@@ -315,16 +315,16 @@ public class Chat {
     }
 
     private void showAdminPanel(Update update){
-        if (!Loader.getAdminsIDs().contains(update.getMessage().getFrom().getId())){
-            String messageText = "شما به این قسمت دسترسی ندارید.";
-            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-            try {
-                mainController.sendMessageToUser(sendMessage);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-            return;
-        }
+//        if (!Loader.getAdminsIDs().contains(update.getMessage().getFrom().getId())){
+//            String messageText = "شما به این قسمت دسترسی ندارید.";
+//            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+//            try {
+//                mainController.sendMessageToUser(sendMessage);
+//            } catch (TelegramApiException e) {
+//                e.printStackTrace();
+//            }
+//            return;
+//        }
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), "پنل مدیریت:");
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
