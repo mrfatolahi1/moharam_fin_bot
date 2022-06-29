@@ -1,0 +1,26 @@
+{
+  "id" : 23,
+  "user" : {
+    "id" : 625934411,
+    "name" : "احمدرضا سبزواری",
+    "username" : "AHMDSBZ",
+    "email" : "Sabzevarii313@gmail.con",
+    "phoneNumber" : "0901714991",
+    "transactionsIDsList" : [ 10, 17, 18, 23 ]
+  },
+  "amount" : 5000,
+  "fee" : 0,
+  "description" : "jjkocnaskd",
+  "adminDescription" : "",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAIJN2K8tQ_H0MulEP-WPCjP7tALCtQSAAJnuTEbhYfhUTLLSf_7uifqAQADAgADcwADKQQ",
+  "time" : [ 2022, 6, 30, 0, 54, 47, 389536600 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 9
+  },
+  "verificated" : false,
+  "hasPaperInvoice" : false,
+  "deleted" : false
+}

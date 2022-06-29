@@ -51,7 +51,7 @@ public class MainMenu {
     }
 
     public void handleNewUpdate(Update update){
-        System.out.println("name: "+user.getName());
+        System.out.println("name: " + user.getName());
         System.out.println("this.estate = " + this.estate);
         try {
             System.out.println("update = " + update.getMessage().getText());
@@ -103,7 +103,7 @@ public class MainMenu {
         if (update.getMessage().getText().equals("مشاهده تراکنش")){
             requestWantedTransactionID(1);
         } else
-        if (update.getMessage().getText().equals("ویرایش تراکنش")){//
+        if (update.getMessage().getText().equals("ویرایش تراکنش")){
             requestWantedTransactionID(2);
         } else
         if (update.getMessage().getText().equals("تراز مالی")){
@@ -326,7 +326,7 @@ public class MainMenu {
         for (int transactionID : user.getTransactionsIDsList()){
             Transaction transaction = Loader.loadTransaction(transactionID);
             if (transaction != null){
-                messageText1 = messageText1 + transactionID + " / ";
+                messageText1 = messageText1 + transactionID + ": " + transaction.getDescription() + "\n";
             }
         }
         SendMessage sendMessage1 = new SendMessage(String.valueOf(chatID), messageText1);
