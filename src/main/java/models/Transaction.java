@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.time4j.calendar.PersianCalendar;
 
 import java.io.File;
@@ -19,6 +20,7 @@ public class Transaction {
     private PersianDate persianDate;
     private boolean verificated;
     private boolean hasPaperInvoice;
+    private boolean deleted;
 
     public Transaction(){}
 
@@ -37,6 +39,7 @@ public class Transaction {
         this.persianDate = PersianDate.now();
         this.adminDescription = "";
         this.hasPaperInvoice = false;
+        this.deleted = false;
     }
 
     public int getId() {
@@ -142,6 +145,14 @@ public class Transaction {
         return "خرج شده توسط خدام";
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public String toString() {
         return
@@ -163,4 +174,19 @@ public class Transaction {
                         + "توضیحات: " + description + "\n"
                         + "توضیحات مدیر: " +adminDescription;
     }
+
+    @JsonIgnore
+    public String getReadableTime(){
+        return getTime().getHour() + ":"
+                + getTime().getMinute() + ":"
+                + getTime().getSecond();
+    }
+
+    @JsonIgnore
+    public String getReadableDate(){
+        return getPersianDate().getDay()
+                + " " + PersianDate.getMonthNameByItNumber(getPersianDate().getMonth())
+                + " " + getPersianDate().getYear();
+    }
+
 }

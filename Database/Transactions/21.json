@@ -1,26 +1,26 @@
 {
-  "id" : 9,
+  "id" : 21,
   "user" : {
     "id" : 411069917,
     "name" : "محمدرضا فتح‌اللهی",
     "username" : "mrfatolahi1",
     "email" : "fatolahi.cs@yahoo.com",
     "phoneNumber" : "09182606160",
-    "transactionsIDsList" : [ 1, 2, 8, 9 ]
+    "transactionsIDsList" : [ 1, 2, 8, 9, 16, 20, 21 ]
   },
-  "amount" : 333,
+  "amount" : 2000,
   "fee" : 0,
-  "description" : "adsfa",
+  "description" : "AAA",
+  "adminDescription" : "",
   "type" : "EXPENDITURE",
-  "factorImageFileId" : "AgACAgQAAxkBAAIBimK3XlOpI5dbTCFMHWnjeO-GHzSKAAKauTEbEVG5Uey1ZE7HYw71AQADAgADcwADKQQ",
-  "time" : [ 2022, 6, 25, 23, 43, 24, 343527000 ],
+  "factorImageFileId" : "AgACAgQAAxkBAAIH3mK8NYuTbETr_mvO-64AARNc6F3jtgACfbsxG6Fl4FHCkEGMQ5QDhAEAAwIAA3MAAykE",
+  "time" : [ 2022, 6, 29, 15, 50, 43, 932028200 ],
   "persianDate" : {
     "year" : 1401,
     "month" : 4,
-    "day" : 4
+    "day" : 8
   },
   "verificated" : false,
-  "adminDescription" : "",
   "hasPaperInvoice" : false,
   "deleted" : false
 }

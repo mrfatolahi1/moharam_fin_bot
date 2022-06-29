@@ -20,5 +20,6 @@
   },
   "verificated" : false,
   "adminDescription" : "",
-  "hasPaperInvoice" : false
+  "hasPaperInvoice" : false,
+  "deleted" : false
 }

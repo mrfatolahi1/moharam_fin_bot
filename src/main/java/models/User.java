@@ -71,7 +71,7 @@ public class User {
     }
 
     public long calculateBalance(){
-        ArrayList<Transaction> transactionsList = Loader.getUserTransactions(this);
+        ArrayList<Transaction> transactionsList = Loader.loadUserTransactions(this);
         long balance = 0;
 
         for (Transaction transaction : transactionsList){

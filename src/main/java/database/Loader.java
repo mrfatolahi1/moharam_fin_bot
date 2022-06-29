@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import models.Transaction;
+import models.TransactionType;
 import models.User;
 
 import java.io.File;
@@ -37,14 +38,17 @@ public class Loader {
         }
     }
 
-    public synchronized static ArrayList<Transaction> getUserTransactions(User user){
+    public synchronized static ArrayList<Transaction> loadUserTransactions(User user){
         ArrayList<Transaction> transactionsList = new ArrayList<>();
         for (int transactionID : user.getTransactionsIDsList()){
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
             objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
             try {
-                 transactionsList.add(objectMapper.readValue(new File("Database/Transactions/"+transactionID+".json"), Transaction.class));
+                Transaction transaction = objectMapper.readValue(new File("Database/Transactions/"+transactionID+".json"), Transaction.class);
+                if (!transaction.isDeleted()){
+                    transactionsList.add(transaction);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -63,7 +67,32 @@ public class Loader {
 
         for (int i = 1 ; i <= fileCount ; i++){
             try {
-                transactionsList.add(objectMapper.readValue(new File("Database/Transactions/"+i+".json"), Transaction.class));
+                Transaction transaction = objectMapper.readValue(new File("Database/Transactions/"+i+".json"), Transaction.class);
+                if (!transaction.isDeleted()){
+                    transactionsList.add(transaction);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return transactionsList;
+    }
+
+    public synchronized static ArrayList<Transaction> loadAllTransactions(TransactionType type){
+        ArrayList<Transaction> transactionsList = new ArrayList<>();
+        File directory=new File("Database/Transactions/");
+        int fileCount= Objects.requireNonNull(directory.list()).length;
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+
+        for (int i = 1 ; i <= fileCount ; i++){
+            try {
+                Transaction transaction = objectMapper.readValue(new File("Database/Transactions/"+i+".json"), Transaction.class);
+                if (transaction.getType() == type && !transaction.isDeleted()){
+                    transactionsList.add(transaction);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -83,6 +112,23 @@ public class Loader {
             return adminsIDsList;
         } catch (FileNotFoundException e){
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public synchronized static Transaction loadTransaction(int id){
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+        Transaction transaction = null;
+        try {
+            transaction = objectMapper.readValue(new File("Database/Transactions/"+id+".json"), Transaction.class);
+            if (!transaction.isDeleted()){
+                return transaction;
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
             return null;
         }
     }
