@@ -1,0 +1,26 @@
+{
+  "id" : 31,
+  "user" : {
+    "id" : 103946103,
+    "name" : "ابراهیم تقوی",
+    "username" : "ebraaaaaaahim7",
+    "email" : "etebrahimt7@gmail.com",
+    "phoneNumber" : "09391511288",
+    "transactionsIDsList" : [ 11, 12, 24, 25, 26, 27, 28, 29, 30, 31 ]
+  },
+  "amount" : 1,
+  "fee" : 0,
+  "description" : "ارزون‌ترین فتح‌اللهی موجود در بازار",
+  "adminDescription" : "",
+  "type" : "EXPENDITURE",
+  "factorImageFileId" : "AgACAgQAAxkBAAINHGK8vUPhPkt0ckAwZtfovwbDsgJCAAIvuTEbPyPpUQOZ84CxHhOJAQADAgADcwADKQQ",
+  "time" : [ 2022, 6, 30, 1, 29, 47, 789744000 ],
+  "persianDate" : {
+    "year" : 1401,
+    "month" : 4,
+    "day" : 9
+  },
+  "verificated" : false,
+  "hasPaperInvoice" : false,
+  "deleted" : false
+}
