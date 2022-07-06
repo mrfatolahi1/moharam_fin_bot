@@ -22,6 +22,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class MainMenu {
@@ -31,6 +32,8 @@ public class MainMenu {
     private MainMenuEstate estate;
     private final AdminPanel adminPanel;
     private final UserEditTransactionPanel userEditTransactionPanel;
+    private LocalDateTime lastActionTime;
+    private boolean hasActiveSession;
 
     public MainMenu(MainController mainController, long chatID, User user) {
         this.mainController = mainController;
@@ -39,6 +42,7 @@ public class MainMenu {
         this.estate = MainMenuEstate.NOT_SIGNED_UP;
         this.adminPanel = new AdminPanel(this);
         this.userEditTransactionPanel = new UserEditTransactionPanel(this);
+        this.lastActionTime = LocalDateTime.now();
     }
 
     public MainMenu(MainController mainController, long chatID, User user, MainMenuEstate estate) {
@@ -48,6 +52,7 @@ public class MainMenu {
         this.estate = estate;
         this.adminPanel = new AdminPanel(this);
         this.userEditTransactionPanel = new UserEditTransactionPanel(this);
+        this.lastActionTime = LocalDateTime.now();
     }
 
     public void handleNewUpdate(Update update){
@@ -62,7 +67,10 @@ public class MainMenu {
                 System.out.println("NO TEXT");
             }
         }
+        System.out.println("update.getMessage().getChatId() = " + update.getMessage().getChatId());
         System.out.println();
+        this.lastActionTime = LocalDateTime.now();
+        this.hasActiveSession = true;
 
         if (estate == MainMenuEstate.NOT_SIGNED_UP){
             sendSignUpError(update);
@@ -120,12 +128,7 @@ public class MainMenu {
         this.estate = MainMenuEstate.SIGNING_UP;
         String messageText = "خادم محترم، مشخصات شما در سامانه ثبت نشده است، لطفا مشخصات زیر را به ترتیب (در خطوط جداگانه) در یک پیام ارسال نمایید.\n\n نام و نام خانوادگی \n شماره همراه\n ایمیل";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-        try {
-
-            mainController.sendMessageToUser(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        sendMessageToUser(sendMessage);
     }
 
     private void signUp(Update update){
@@ -142,21 +145,13 @@ public class MainMenu {
         }catch (Exception e){
             String messageText = "فرمت مشخصات وارد شده صحیح نیست، مجددا تلاش کنید۱.";
             SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-            try {
-                mainController.sendMessageToUser(sendMessage);
-            } catch (TelegramApiException q) {
-                e.printStackTrace();
-            }
+            sendMessageToUser(sendMessage);
             return;
         }
 
         String messageText = "مشخصات شما با موفقیت در سامانه ثبت شد، حالا می‌توانید تراکنش‌های خود را ثبت کنید.";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-        try {
-            mainController.sendMessageToUser(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        sendMessageToUser(sendMessage);
         showMainMenu(update);
     }
 
@@ -178,11 +173,7 @@ public class MainMenu {
         keyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(keyboardMarkup);
         estate = MainMenuEstate.MAIN_MENU;
-        try {
-            mainController.sendMessageToUser(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        sendMessageToUser(sendMessage);
     }
 
     private void showAddNewTransactionMessageForUser(){
@@ -196,11 +187,7 @@ public class MainMenu {
         keyboard.add(row);
         keyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(keyboardMarkup);
-        try {
-            mainController.sendMessageToUser(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        sendMessageToUser(sendMessage);
     }
 
     private void sendAllUserTransactionsExcelFile(Update update) {
@@ -267,16 +254,12 @@ public class MainMenu {
 
 
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-        try {
-            mainController.sendMessageToUser(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        sendMessageToUser(sendMessage);
     }
 
     private void showAdminPanel(Update update){
         estate = MainMenuEstate.ADMIN_PANEL;
-        adminPanel.showAdminPanel();
+        adminPanel.showAdminPanel(update);
     }
 
     private void addNewTransaction(Update update){
@@ -299,20 +282,12 @@ public class MainMenu {
         } catch (Exception e){
             String messageText = "فرمت مشخصات وارد شده صحیح نیست، مجددا تلاش کنید.";
             SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-            try {
-                mainController.sendMessageToUser(sendMessage);
-            } catch (TelegramApiException q) {
-                e.printStackTrace();
-            }
+            sendMessageToUser(sendMessage);
             return;
         }
         String messageText = "تراکنش با موفقیت ثبت شد.";
         SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-        try {
-            mainController.sendMessageToUser(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        sendMessageToUser(sendMessage);
         showMainMenu(update);
     }
 
@@ -330,11 +305,7 @@ public class MainMenu {
             }
         }
         SendMessage sendMessage1 = new SendMessage(String.valueOf(chatID), messageText1);
-        try {
-            mainController.sendMessageToUser(sendMessage1);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        sendMessageToUser(sendMessage1);
 
         String messageText;
         if (type == 1){
@@ -350,11 +321,7 @@ public class MainMenu {
         keyboard.add(row);
         keyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(keyboardMarkup);
-        try {
-            mainController.sendMessageToUser(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        sendMessageToUser(sendMessage);
     }
 
     private void showTransactionInfo(Update update){
@@ -448,8 +415,33 @@ public class MainMenu {
         this.estate = mainMenuEstate;
     }
 
+    public LocalDateTime getLastActionTime() {
+        return lastActionTime;
+    }
+
+    public void setLastActionTime(LocalDateTime lastActionTime) {
+        this.lastActionTime = lastActionTime;
+    }
+
+    public AdminPanel getAdminPanel() {
+        return adminPanel;
+    }
+
+    public UserEditTransactionPanel getUserEditTransactionPanel() {
+        return userEditTransactionPanel;
+    }
+
+    public boolean isHasActiveSession() {
+        return hasActiveSession;
+    }
+
+    public void setHasActiveSession(boolean hasActiveSession) {
+        this.hasActiveSession = hasActiveSession;
+    }
+
     public void sendMessageToUser(Object object){
         try {
+            this.hasActiveSession = false;
             mainController.sendMessageToUser(object);
         } catch (TelegramApiException e) {
             e.printStackTrace();

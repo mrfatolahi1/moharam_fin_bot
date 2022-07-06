@@ -12,6 +12,7 @@
   "fee" : 0,
   "description" : "jjkocnaskd",
   "adminDescription" : "",
+  "adminInternalDescription" : "",
   "type" : "EXPENDITURE",
   "factorImageFileId" : "AgACAgQAAxkBAAIJN2K8tQ_H0MulEP-WPCjP7tALCtQSAAJnuTEbhYfhUTLLSf_7uifqAQADAgADcwADKQQ",
   "time" : [ 2022, 6, 30, 0, 54, 47, 389536600 ],

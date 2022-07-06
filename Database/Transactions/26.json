@@ -12,6 +12,7 @@
   "fee" : 0,
   "description" : "ارزون‌تر از ارزون‌ترین فتح‌اللهی موجود در بازار",
   "adminDescription" : "",
+  "adminInternalDescription" : "",
   "type" : "EXPENDITURE",
   "factorImageFileId" : "AgACAgQAAxkBAAIMW2K8unzgVcYdKypc_sq6llRbMGY0AAIvuTEbPyPpUQOZ84CxHhOJAQADAgADcwADKQQ",
   "time" : [ 2022, 6, 30, 1, 17, 56, 180743500 ],

@@ -21,6 +21,7 @@
   },
   "verificated" : false,
   "adminDescription" : "",
+  "adminInternalDescription" : "",
   "hasPaperInvoice" : false,
   "deleted" : false
 }

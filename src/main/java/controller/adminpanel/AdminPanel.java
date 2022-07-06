@@ -1,7 +1,7 @@
 package controller.adminpanel;
 
 import controller.MainMenu;
-import controller.MainMenuEstate;
+import controller.adminpanel.adddeleteadminspanel.AddDeleteAdminsPanel;
 import controller.adminpanel.adminEditTransactionPanel.AdminEditTransactionPanel;
 import controller.adminpanel.listspanel.ListsPanel;
 import database.Loader;
@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,7 @@ public class AdminPanel {
     private final ArrayList<String> cachedInfo;
     private final ListsPanel listsPanel;
     private final AdminEditTransactionPanel adminEditTransactionPanel;
+    private final AddDeleteAdminsPanel addDeleteAdminsPanel;
 
     public AdminPanel(MainMenu mainMenu) {
         this.mainMenu = mainMenu;
@@ -34,6 +34,7 @@ public class AdminPanel {
         this.cachedInfo = new ArrayList<>();
         this.listsPanel = new ListsPanel(this);
         this.adminEditTransactionPanel = new AdminEditTransactionPanel(this);
+        this.addDeleteAdminsPanel = new AddDeleteAdminsPanel(this);
     }
 
     public MainMenu getChat() {
@@ -69,7 +70,10 @@ public class AdminPanel {
                             } else
                                 if (estate == AdminPanelEstate.ADMIN_EDIT_TRANSACTION_PANEL){
                                     adminEditTransactionPanel.handleNewUpdate(update);
-                                }
+                                } else
+                                    if (estate == AdminPanelEstate.ADD_DELETE_ADMINS_PANEL){
+                                        addDeleteAdminsPanel.handleNewUpdate(update);
+                                    }
     }
 
     private void handleAdminPanelRequest(Update update){
@@ -91,24 +95,25 @@ public class AdminPanel {
         if (update.getMessage().getText().equals("لیست‌ها")){//
             showListsPanel();
         } else
+        if (update.getMessage().getText().equals("مدیریت مدیران!")){//
+            showAddDeleteAdminsPanel(update);
+        } else
         if (update.getMessage().getText().equals("بازگشت به منوی اصلی")){
             showMainMenu(update);
         } else {
-            showAdminPanel();
+            showAdminPanel(update);
         }
     }
 
-    public void showAdminPanel(){
-//        if (!Loader.getAdminsIDs().contains(update.getMessage().getFrom().getId())){
-//            String messageText = "شما به این قسمت دسترسی ندارید.";
-//            SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
-//            try {
-//                mainController.sendMessageToUser(sendMessage);
-//            } catch (TelegramApiException e) {
-//                e.printStackTrace();
-//            }
-//            return;
-//        }
+    public void showAdminPanel(Update update){
+        if (!Loader.loadAdminsIDsList().contains(update.getMessage().getFrom().getId())){
+            System.out.println("Loader.loadAdminsIDsList() = " + Loader.loadAdminsIDsList());
+            System.out.println("update.getMessage().getFrom().getId() = " + update.getMessage().getFrom().getId());
+            String messageText = "شما به این قسمت دسترسی ندارید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
+            mainMenu.sendMessageToUser(sendMessage);
+            return;
+        }
         SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), "پنل مدیریت:");
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
@@ -120,7 +125,7 @@ public class AdminPanel {
         row1.add("ویرایش تراکنش");
         row2.add("تراکنش‌های کاربر");
         row2.add("حذف تراکنش");
-//        row2.add("دیدن کل تراکنش‌ها");
+        row2.add("مدیریت مدیران!");
         row3.add("بازگشت به منوی اصلی");
         keyboard.add(row1);
         keyboard.add(row2);
@@ -149,7 +154,7 @@ public class AdminPanel {
     private void addNewTransactionWithAdmin1(Update update){
         if (update.getMessage().getText() != null){
             if (update.getMessage().getText().equals("انصراف")) {
-                showAdminPanel();
+                showAdminPanel(update);
                 return;
             }
         }
@@ -176,7 +181,7 @@ public class AdminPanel {
     private void addNewTransactionWithAdmin2(Update update){
         if (update.getMessage().getText() != null){
             if (update.getMessage().getText().equals("انصراف")) {
-                showAdminPanel();
+                showAdminPanel(update);
                 return;
             }
         }
@@ -211,7 +216,7 @@ public class AdminPanel {
         SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
         mainMenu.sendMessageToUser(sendMessage);
 
-        showAdminPanel();
+        showAdminPanel(update);
     }
 
     private void requestWantedTransactionUserNumericID(){
@@ -253,7 +258,7 @@ public class AdminPanel {
     private void showTransactionInfo(Update update){
         if (update.getMessage().getText() != null){
             if (update.getMessage().getText().equals("انصراف")) {
-                showMainMenu(update);
+                showAdminPanel(update);
                 return;
             }
         }
@@ -280,15 +285,15 @@ public class AdminPanel {
         }
 
         SendPhoto sendPhoto = new SendPhoto(String.valueOf(mainMenu.getChatID()), new InputFile(transaction.getFactorImageFileId()));
-        sendPhoto.setCaption(transaction.toString());
+        sendPhoto.setCaption(transaction.adminToString());
         sendMessageToUser(sendPhoto);
-        showAdminPanel();
+        showAdminPanel(update);
     }
 
     private void showAdminEditTransactionPanel(Update update){
         if (update.getMessage().getText() != null){
             if (update.getMessage().getText().equals("انصراف")) {
-                showAdminPanel();
+                showAdminPanel(update);
                 return;
             }
         }
@@ -323,6 +328,11 @@ public class AdminPanel {
     private void showListsPanel(){
         estate = AdminPanelEstate.LISTS_PANEL;
         listsPanel.showListsPanel();
+    }
+
+    private void showAddDeleteAdminsPanel(Update update){
+        estate = AdminPanelEstate.ADD_DELETE_ADMINS_PANEL;
+        addDeleteAdminsPanel.showAddDeleteAdminsPanel(update);
     }
 
     public void sendMessageToUser(Object object){

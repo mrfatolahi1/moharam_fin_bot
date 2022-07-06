@@ -12,6 +12,10 @@ import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,12 +23,21 @@ import java.util.Objects;
 
 public class MainController extends TelegramLongPollingBot{
     private final ArrayList<MainMenu> mainMenus;
+    private final Thread timeoutThread;
 
     private MainMenuEstate mainMenuEstate;
 
     public MainController() {
         this.mainMenus = new ArrayList<>();
         this.mainMenuEstate = MainMenuEstate.MAIN_MENU;
+        this.timeoutThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                checkChatsForTimeOut();
+            }
+        });
+
+        timeoutThread.start();
     }
 
     @Override
@@ -48,6 +61,15 @@ public class MainController extends TelegramLongPollingBot{
             MainMenu mainMenu = getChat(chatID);
             if (mainMenu != null){
                 System.out.println("\nonline chat");
+                if (mainMenu.isHasActiveSession()){
+                    SendMessage sendMessage = new SendMessage(String.valueOf(update.getMessage().getChatId()), "شما یک درخواست در جریان دارید.");
+                    try {
+                        sendMessageToUser(sendMessage);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                    return;
+                }
                 mainMenu.handleNewUpdate(update);
             } else
             if (Loader.loadUser(update.getMessage().getFrom().getId()) != null) {
@@ -111,5 +133,42 @@ public class MainController extends TelegramLongPollingBot{
         }
 
         return null;
+    }
+
+    private void checkChatsForTimeOut(){
+        while (true){
+            LocalDateTime nowTime = LocalDateTime.now();
+            ArrayList<MainMenu> timeOuts = new ArrayList<>();
+            for (MainMenu chat : mainMenus) {
+                LocalDateTime lastActionTime = chat.getLastActionTime();
+                LocalDateTime from = LocalDateTime.of(lastActionTime.getYear(), lastActionTime.getDayOfMonth(), lastActionTime.getDayOfMonth(),
+                        lastActionTime.getHour(), lastActionTime.getMinute(), lastActionTime.getSecond());
+                LocalDateTime to = LocalDateTime.of(nowTime.getYear(), nowTime.getDayOfMonth(), nowTime.getDayOfMonth(),
+                        nowTime.getHour(), nowTime.getMinute(), nowTime.getSecond());
+                Duration duration = Duration.between(from, to);
+                if (duration.getSeconds() > 60) {
+                    timeOuts.add(chat);
+                }
+            }
+            for (MainMenu timeOutedChat : timeOuts) {
+                if (timeOutedChat.getEstate() != MainMenuEstate.MAIN_MENU){
+                    SendMessage sendMessage = new SendMessage(String.valueOf(timeOutedChat.getChatID()), "شما به مدت حدودا یک ساعت درخواست جدیدی ثبت نکرده‌اید، به منظور صرفه‌جویی در منابع به منوی اصلی هدایت می‌شوید، اگر در حال انجام کاری بوده‌اید و آن را ثبت نکرده‌اید، باید مجددا از اول آن را انجام دهید و چیزی در سیستم ثبت نشده است.");
+                    try {
+                        sendMessageToUser(sendMessage);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                    timeOutedChat.showMainMenu(null);
+                }
+                System.out.println("\nRemoved: " + timeOutedChat.getUser().getUsername());
+                mainMenus.remove(timeOutedChat);
+            }
+
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@
   "fee" : 0,
   "description" : "خر",
   "adminDescription" : "",
+  "adminInternalDescription" : "",
   "type" : "EXPENDITURE",
   "factorImageFileId" : "AgACAgQAAxkBAAIKNmK8uRIcueOfST35ssTK5RvVZuNWAAItuTEbPyPpUUwjG_8lYTolAQADAgADcwADKQQ",
   "time" : [ 2022, 6, 30, 1, 11, 54, 77257600 ],

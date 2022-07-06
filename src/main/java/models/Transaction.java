@@ -14,6 +14,7 @@ public class Transaction {
     private int fee;
     private String description;
     private String adminDescription;
+    private String adminInternalDescription;
     private TransactionType type;
     private String factorImageFileId;
     private LocalDateTime time;
@@ -38,6 +39,7 @@ public class Transaction {
         this.verificated = false;
         this.persianDate = PersianDate.now();
         this.adminDescription = "";
+        this.adminInternalDescription = "";
         this.hasPaperInvoice = false;
         this.deleted = false;
     }
@@ -145,6 +147,14 @@ public class Transaction {
         return "خرج شده توسط خدام";
     }
 
+    public String getAdminInternalDescription() {
+        return adminInternalDescription;
+    }
+
+    public void setAdminInternalDescription(String adminInternalDescription) {
+        this.adminInternalDescription = adminInternalDescription;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
@@ -173,6 +183,28 @@ public class Transaction {
                         + "دارای فاکتور کاغذی: " + isHasPaperInvoice() + "\n"
                         + "توضیحات: " + description + "\n"
                         + "توضیحات مدیر: " +adminDescription;
+    }
+
+    public String adminToString() {
+        return
+                "آیدی: " + id + '\n' +
+                        "کاربر: " + "@" +user.getUsername() + '\n' +
+                        "مبلغ: " + amount + '\n' +
+                        "کارمزد: " + fee + '\n' +
+                        "نوع: " + Transaction.getPersianType(type)
+                        + "\n" + "تاریخ: "
+                        + getPersianDate().getDay()
+                        + " " + PersianDate.getMonthNameByItNumber(getPersianDate().getMonth())
+                        + " " + getPersianDate().getYear()
+                        + "\n" + "زمان: "
+                        + getTime().getHour() + ":"
+                        + getTime().getMinute() + ":"
+                        + getTime().getSecond() + "\n"
+                        + "وضعیت تایید: " + isVerificated() + "\n"
+                        + "دارای فاکتور کاغذی: " + isHasPaperInvoice() + "\n"
+                        + "توضیحات: " + description + "\n"
+                        + "توضیحات مدیر: " +adminDescription + "\n"
+                        + "توضیحات داخلی مدیر: " +adminInternalDescription;
     }
 
     @JsonIgnore

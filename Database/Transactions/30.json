@@ -12,6 +12,7 @@
   "fee" : 0,
   "description" : "ارزون‌ترین فتح‌اللهی موجود در بازار",
   "adminDescription" : "",
+  "adminInternalDescription" : "",
   "type" : "EXPENDITURE",
   "factorImageFileId" : "AgACAgQAAxkBAAINGGK8vTar3_z-KaG8n_RlXUyuguNTAAIvuTEbPyPpUQOZ84CxHhOJAQADAgADcwADKQQ",
   "time" : [ 2022, 6, 30, 1, 29, 34, 577309500 ],

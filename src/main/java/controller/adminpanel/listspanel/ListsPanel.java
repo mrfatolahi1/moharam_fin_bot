@@ -100,7 +100,7 @@ public class ListsPanel {
             sendListOfDebtorsExcelFile();
         } else
         if (update.getMessage().getText().equals("بازگشت به پنل مدیریت")){
-            showAdminPanel();
+            showAdminPanel(update);
         } else {
             showListsPanel();
         }
@@ -162,6 +162,7 @@ public class ListsPanel {
         header.createCell(8).setCellValue("دارای فاکتور کاغذی");
         header.createCell(9).setCellValue("توضیحات کاربر");
         header.createCell(10).setCellValue("توضیحات مدیر");
+        header.createCell(11).setCellValue("توضیحات داخلی مدیر");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -177,6 +178,7 @@ public class ListsPanel {
             row.createCell(8).setCellValue(String.valueOf(transaction.isHasPaperInvoice()));
             row.createCell(9).setCellValue(String.valueOf(transaction.getDescription()));
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
+            row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -209,6 +211,7 @@ public class ListsPanel {
         header.createCell(8).setCellValue("دارای فاکتور کاغذی");
         header.createCell(9).setCellValue("توضیحات کاربر");
         header.createCell(10).setCellValue("توضیحات مدیر");
+        header.createCell(11).setCellValue("توضیحات داخلی مدیر");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -224,6 +227,7 @@ public class ListsPanel {
             row.createCell(8).setCellValue(String.valueOf(transaction.isHasPaperInvoice()));
             row.createCell(9).setCellValue(String.valueOf(transaction.getDescription()));
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
+            row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -256,6 +260,7 @@ public class ListsPanel {
         header.createCell(8).setCellValue("دارای فاکتور کاغذی");
         header.createCell(9).setCellValue("توضیحات کاربر");
         header.createCell(10).setCellValue("توضیحات مدیر");
+        header.createCell(11).setCellValue("توضیحات داخلی مدیر");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -271,6 +276,7 @@ public class ListsPanel {
             row.createCell(8).setCellValue(String.valueOf(transaction.isHasPaperInvoice()));
             row.createCell(9).setCellValue(String.valueOf(transaction.getDescription()));
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
+            row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -303,6 +309,7 @@ public class ListsPanel {
         header.createCell(8).setCellValue("دارای فاکتور کاغذی");
         header.createCell(9).setCellValue("توضیحات کاربر");
         header.createCell(10).setCellValue("توضیحات مدیر");
+        header.createCell(11).setCellValue("توضیحات داخلی مدیر");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -318,6 +325,7 @@ public class ListsPanel {
             row.createCell(8).setCellValue(String.valueOf(transaction.isHasPaperInvoice()));
             row.createCell(9).setCellValue(String.valueOf(transaction.getDescription()));
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
+            row.createCell(10).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -393,6 +401,7 @@ public class ListsPanel {
         header.createCell(8).setCellValue("دارای فاکتور کاغذی");
         header.createCell(9).setCellValue("توضیحات کاربر");
         header.createCell(10).setCellValue("توضیحات مدیر");
+        header.createCell(11).setCellValue("توضیحات داخلی مدیر");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -408,6 +417,7 @@ public class ListsPanel {
             row.createCell(8).setCellValue(String.valueOf(transaction.isHasPaperInvoice()));
             row.createCell(9).setCellValue(String.valueOf(transaction.getDescription()));
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
+            row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -537,8 +547,8 @@ public class ListsPanel {
         this.estate = estate;
     }
 
-    private void showAdminPanel(){
+    private void showAdminPanel(Update update){
         this.estate = ListsPanelEstate.EXCEL_OUTPUT_PANEL;
-        adminPanel.showAdminPanel();
+        adminPanel.showAdminPanel(update);
     }
 }

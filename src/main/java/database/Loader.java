@@ -14,13 +14,14 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Loader {
+public class Loader extends IO{
+
     public synchronized static User loadUser(long userId) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
         try {
-            return objectMapper.readValue(new File("Database/Users/"+userId+".json"), User.class);
+            return objectMapper.readValue(new File(rootPath + "Users/"+userId+".json"), User.class);
         } catch (IOException e) {
             return null;
         }
@@ -45,7 +46,7 @@ public class Loader {
             objectMapper.registerModule(new JavaTimeModule());
             objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
             try {
-                Transaction transaction = objectMapper.readValue(new File("Database/Transactions/"+transactionID+".json"), Transaction.class);
+                Transaction transaction = objectMapper.readValue(new File(rootPath + "Transactions/"+transactionID+".json"), Transaction.class);
                 if (!transaction.isDeleted()){
                     transactionsList.add(transaction);
                 }
@@ -59,7 +60,7 @@ public class Loader {
 
     public synchronized static ArrayList<Transaction> loadAllTransactions(){
         ArrayList<Transaction> transactionsList = new ArrayList<>();
-        File directory=new File("Database/Transactions/");
+        File directory=new File(rootPath + "Transactions/");
         int fileCount= Objects.requireNonNull(directory.list()).length;
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -81,7 +82,7 @@ public class Loader {
 
     public synchronized static ArrayList<Transaction> loadAllTransactions(TransactionType type){
         ArrayList<Transaction> transactionsList = new ArrayList<>();
-        File directory=new File("Database/Transactions/");
+        File directory=new File(rootPath + "Transactions/");
         int fileCount= Objects.requireNonNull(directory.list()).length;
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -122,7 +123,7 @@ public class Loader {
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
         Transaction transaction = null;
         try {
-            transaction = objectMapper.readValue(new File("Database/Transactions/"+id+".json"), Transaction.class);
+            transaction = objectMapper.readValue(new File(rootPath + "Transactions/"+id+".json"), Transaction.class);
             if (!transaction.isDeleted()){
                 return transaction;
             } else {
@@ -133,25 +134,9 @@ public class Loader {
         }
     }
 
-//    public static User loadUser(String username){
-//        int userId = 0;
-//        try {
-//            userId = loadIdWithUsername(username);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
-//        try {
-//            return objectMapper.readValue(new File("Database/Users/"+String.valueOf(userId)+".json"), User.class);
-//        } catch (IOException e) {
-//            return null;
-//        }
-//    }
-
     public synchronized static ArrayList<User> loadAllUsers(){
         ArrayList<User> usersList = new ArrayList<>();
-        File directory = new File("Database/Users");
+        File directory = new File(rootPath + "Users");
 
         for (String fileName : directory.list()){
             String filePath = "Database/Users/" + fileName;
@@ -175,6 +160,21 @@ public class Loader {
         return output;
     }
 
+    public synchronized static String getAdminsIDsListAsString(){
+        ArrayList<Long> adminsIDsList = loadAdminsIDsList();
+        String output = "لیست مدیران به همراه آیدی‌های عددی آنان:\n\n";
+
+        for (long adminId : adminsIDsList){
+            User admin = Loader.loadUser(adminId);
+            if (admin.getName() == null){
+                continue;
+            }
+            output = output + admin.getName() + ": " + admin.getId() + "\n";
+        }
+
+        return output;
+    }
+
     public static void updateUserFromDatabase(User user){
         User loadedUser = Loader.loadUser(user.getId());
 
@@ -185,24 +185,21 @@ public class Loader {
         user.setTransactionsIDsList(loadedUser.getTransactionsIDsList());
     }
 
-//    private static int loadIdWithUsername(String userName) throws IOException, IOException {
-//        File file = new File("Database/Usernames/"+userName+".json");
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
-//        return objectMapper.readValue(file, int.class);
-//    }
-//
-//    public static ArrayList<User> loadAllUsers(){
-//        ArrayList<User> users= new ArrayList<>();
-//
-//        File usernamesFolder = new File("Database/Usernames");
-//
-//        for (File usernameFile : usernamesFolder.listFiles()){
-//            users.add(loadUser(usernameFile.getName().substring(0, usernameFile.getName().length()-5)));
-//        }
-//
-//        return users;
-//    }
+    public static ArrayList<Long> loadAdminsIDsList() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+        try {
+            ArrayList<String> list= objectMapper.readValue(new File(rootPath + "Admins.json"), ArrayList.class);
+            ArrayList<Long> output = new ArrayList<>();
+            for (String str : list){
+                output.add(Long.parseLong(str));
+            }
+            return output;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

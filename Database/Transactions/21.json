@@ -12,6 +12,7 @@
   "fee" : 0,
   "description" : "AAA",
   "adminDescription" : "",
+  "adminInternalDescription" : "",
   "type" : "EXPENDITURE",
   "factorImageFileId" : "AgACAgQAAxkBAAIH3mK8NYuTbETr_mvO-64AARNc6F3jtgACfbsxG6Fl4FHCkEGMQ5QDhAEAAwIAA3MAAykE",
   "time" : [ 2022, 6, 29, 15, 50, 43, 932028200 ],
