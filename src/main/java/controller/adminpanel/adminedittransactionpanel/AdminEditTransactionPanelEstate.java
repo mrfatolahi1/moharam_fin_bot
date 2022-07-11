@@ -1,4 +1,4 @@
-package controller.adminpanel.adminEditTransactionPanel;
+package controller.adminpanel.adminedittransactionpanel;
 
 public enum AdminEditTransactionPanelEstate {
     ADMIN_EDIT_TRANSACTION_PANEL,
@@ -10,4 +10,5 @@ public enum AdminEditTransactionPanelEstate {
     ADMIN_SENDING_NEW_ADMIN_INTERNAL_DESCRIPTION,
     ADMIN_SENDING_NEW_VERIFICATION_STATUS,
     ADMIN_SENDING_NEW_PAPER_INVOICE_STATUS,
+    ADMIN_IS_DELETING_TRANSACTION
 }

@@ -1,4 +1,4 @@
-package controller.adminpanel.adminEditTransactionPanel;
+package controller.adminpanel.adminedittransactionpanel;
 
 import controller.adminpanel.AdminPanel;
 import database.Loader;
@@ -26,7 +26,7 @@ public class AdminEditTransactionPanel {
     }
 
     public void showAdminEditTransactionPanel(int transactionId){
-        Transaction transaction = Loader.loadTransaction(transactionId);
+        Transaction transaction = Loader.loadTransaction(transactionId, false);
         SendPhoto sendPhoto = new SendPhoto(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(transaction.getFactorImageFileId()));
         sendPhoto.setCaption(transaction.adminToString());
         adminPanel.sendMessageToUser(sendPhoto);
@@ -37,6 +37,7 @@ public class AdminEditTransactionPanel {
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
         KeyboardRow row3 = new KeyboardRow();
+        KeyboardRow row4 = new KeyboardRow();
         row1.add("تصویر فاکتور");
         row1.add("مبلغ");
         row1.add("توضیحات");
@@ -45,10 +46,12 @@ public class AdminEditTransactionPanel {
         row2.add("توضیحات داخلی مدیر");
         row2.add("وضعیت تایید");
         row2.add("وضعیت فاکتور کاغذی");
-        row3.add("بازگشت به منوی اصلی");
+        row3.add("حذف تراکنش");
+        row4.add("بازگشت به پنل مدیریت");
         keyboard.add(row1);
         keyboard.add(row2);
         keyboard.add(row3);
+        keyboard.add(row4);
         keyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(keyboardMarkup);
         estate = AdminEditTransactionPanelEstate.ADMIN_EDIT_TRANSACTION_PANEL;
@@ -83,6 +86,9 @@ public class AdminEditTransactionPanel {
         } else
         if (estate == AdminEditTransactionPanelEstate.ADMIN_SENDING_NEW_PAPER_INVOICE_STATUS){
             updateTransactionVPaperInvoiceStatus(update);
+        } else
+        if (estate == AdminEditTransactionPanelEstate.ADMIN_IS_DELETING_TRANSACTION){
+            deleteTransaction(update);
         }
     }
 
@@ -110,6 +116,9 @@ public class AdminEditTransactionPanel {
         } else
         if (update.getMessage().getText().equals("وضعیت فاکتور کاغذی")){
             requestNewPaperInvoiceStatus();
+        } else
+        if (update.getMessage().getText().equals("حذف تراکنش")){
+            requestDeleteConfirmation();
         } else
         if (update.getMessage().getText().equals("بازگشت به پنل مدیریت")){
             showAdminPanel(update);
@@ -141,7 +150,7 @@ public class AdminEditTransactionPanel {
         }
         try {
             String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
-            Transaction transaction = Loader.loadTransaction(cachedTransactionId);
+            Transaction transaction = Loader.loadTransaction(cachedTransactionId, false);
             transaction.setFactorImageFileId(photoFileID);
             Saver.saveTransaction(transaction);
         } catch (Exception e){
@@ -179,7 +188,7 @@ public class AdminEditTransactionPanel {
         }
         try {
             long amount = Long.parseLong(update.getMessage().getText());
-            Transaction transaction = Loader.loadTransaction(cachedTransactionId);
+            Transaction transaction = Loader.loadTransaction(cachedTransactionId, false);
             transaction.setAmount(amount);
             Saver.saveTransaction(transaction);
         } catch (Exception e){
@@ -217,7 +226,7 @@ public class AdminEditTransactionPanel {
         }
         try {
             String description = update.getMessage().getText();
-            Transaction transaction = Loader.loadTransaction(cachedTransactionId);
+            Transaction transaction = Loader.loadTransaction(cachedTransactionId, false);
             transaction.setDescription(description);
             Saver.saveTransaction(transaction);
         } catch (Exception e){
@@ -255,7 +264,7 @@ public class AdminEditTransactionPanel {
         }
         try {
             int fee = Integer.parseInt(update.getMessage().getText());
-            Transaction transaction = Loader.loadTransaction(cachedTransactionId);
+            Transaction transaction = Loader.loadTransaction(cachedTransactionId, false);
             transaction.setFee(fee);
             Saver.saveTransaction(transaction);
         } catch (Exception e){
@@ -293,7 +302,7 @@ public class AdminEditTransactionPanel {
         }
         try {
             String description = update.getMessage().getText();
-            Transaction transaction = Loader.loadTransaction(cachedTransactionId);
+            Transaction transaction = Loader.loadTransaction(cachedTransactionId, false);
             transaction.setAdminDescription(description);
             Saver.saveTransaction(transaction);
             if (!description.equals(".")){
@@ -336,7 +345,7 @@ public class AdminEditTransactionPanel {
         }
         try {
             String description = update.getMessage().getText();
-            Transaction transaction = Loader.loadTransaction(cachedTransactionId);
+            Transaction transaction = Loader.loadTransaction(cachedTransactionId, false);
             transaction.setAdminInternalDescription(description);
             Saver.saveTransaction(transaction);
         } catch (Exception e){
@@ -378,7 +387,7 @@ public class AdminEditTransactionPanel {
         }
         try {
             String newStatus = update.getMessage().getText();
-            Transaction transaction = Loader.loadTransaction(cachedTransactionId);
+            Transaction transaction = Loader.loadTransaction(cachedTransactionId, false);
             if (Objects.equals(newStatus, "تایید شده")){
                 transaction.setVerificated(true);
             } else
@@ -427,7 +436,7 @@ public class AdminEditTransactionPanel {
         }
         try {
             String newStatus = update.getMessage().getText();
-            Transaction transaction = Loader.loadTransaction(cachedTransactionId);
+            Transaction transaction = Loader.loadTransaction(cachedTransactionId, false);
             if (Objects.equals(newStatus, "فاکتور کاغذی دارد")){
                 transaction.setHasPaperInvoice(true);
             } else
@@ -444,6 +453,48 @@ public class AdminEditTransactionPanel {
             return;
         }
         String messageText = "تغییرات با موفقیت ثبت شد.";
+        SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
+        adminPanel.sendMessageToUser(sendMessage);
+        showAdminPanel(update);
+    }
+
+    private void requestDeleteConfirmation(){
+        estate = AdminEditTransactionPanelEstate.ADMIN_IS_DELETING_TRANSACTION;
+        String messageText = "آیا از حذف تراکنش اطمینان دارید؟";
+        SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row1 = new KeyboardRow();
+        KeyboardRow row2 = new KeyboardRow();
+        row1.add("تایید");
+        row2.add("انصراف");
+        keyboard.add(row1);
+        keyboard.add(row2);
+        keyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(keyboardMarkup);
+        adminPanel.sendMessageToUser(sendMessage);
+    }
+
+    private void deleteTransaction(Update update){
+        if (update.getMessage().getText() != null){
+            if (update.getMessage().getText().equals("انصراف")) {
+                showAdminPanel(update);
+                return;
+            }
+        }
+        try {
+            if (update.getMessage().getText().equals("تایید")){
+                Transaction transaction = Loader.loadTransaction(cachedTransactionId, false);
+                transaction.setDeleted(true);
+                Saver.saveTransaction(transaction);
+            }
+        } catch (Exception e){
+            String messageText = "فرمت مشخصات وارد شده صحیح نیست، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
+            adminPanel.sendMessageToUser(sendMessage);
+            return;
+        }
+        String messageText = "تراکنش با موفقیت حذف شد.";
         SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
         adminPanel.sendMessageToUser(sendMessage);
         showAdminPanel(update);

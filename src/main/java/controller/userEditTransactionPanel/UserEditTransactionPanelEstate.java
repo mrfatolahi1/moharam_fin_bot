@@ -5,4 +5,5 @@ public enum UserEditTransactionPanelEstate {
     SENDING_NEW_INVOICE_PHOTO,
     SENDING_NEW_AMOUNT,
     SENDING_NEW_DESCRIPTION,
+    DELETING_TRANSACTION
 }

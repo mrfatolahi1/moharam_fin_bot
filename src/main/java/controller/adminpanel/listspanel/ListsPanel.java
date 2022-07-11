@@ -62,6 +62,7 @@ public class ListsPanel {
         row2.add("تراکنش‌های تخصیص بودجه به خدام");
         row2.add("تراکنش‌های انجام شده توسط خدام");
         row3.add("کل تراکنش‌ها");
+        row3.add("تراکنش‌های ناقص");
         row3.add("تراکنش‌های کاربر");
         row4.add("بازگشت به پنل مدیریت");
         keyboard.add(row1);
@@ -77,6 +78,9 @@ public class ListsPanel {
     private void handleExcelOutputPanelRequest(Update update) throws IOException {
         if (update.getMessage().getText().equals("کل تراکنش‌ها")){
             sendAllTransactionsExcelFile();
+        } else
+        if (update.getMessage().getText().equals("تراکنش‌های ناقص")){
+            sendInCompleteTransactionsExcelFile();
         } else
         if (update.getMessage().getText().equals("تراکنش‌های ورودی")){
             sendAllIncomeTransactionsExcelFile();
@@ -145,7 +149,7 @@ public class ListsPanel {
     }
 
     private void sendAllTransactionsExcelFile() throws IOException {
-        ArrayList<Transaction> transactions = Loader.loadAllTransactions();
+        ArrayList<Transaction> transactions = Loader.loadAllTransactions(true);
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet spreadsheet = workbook.createSheet("تراکنش‌ها");
@@ -189,12 +193,12 @@ public class ListsPanel {
         out.close();
 
         SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Transactions.xlsx"));
-        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌ها\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
+        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌ها (فقط تراکنش‌های تایید شده)\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
         adminPanel.sendMessageToUser(sendDocument);
     }
 
     private void sendAllIncomeTransactionsExcelFile() throws IOException {
-        ArrayList<Transaction> transactions = Loader.loadAllTransactions(TransactionType.INCOME);
+        ArrayList<Transaction> transactions = Loader.loadAllTransactions(TransactionType.INCOME, true);
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet spreadsheet = workbook.createSheet("تراکنش‌ها");
@@ -238,12 +242,12 @@ public class ListsPanel {
         out.close();
 
         SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Transactions.xlsx"));
-        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های ورودی\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
+        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های ورودی (فقط تراکنش‌های تایید شده)\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
         adminPanel.sendMessageToUser(sendDocument);
     }
 
     private void sendAllGiveToUsersTransactionsExcelFile() throws IOException {
-        ArrayList<Transaction> transactions = Loader.loadAllTransactions(TransactionType.GIVE_TO_USERS);
+        ArrayList<Transaction> transactions = Loader.loadAllTransactions(TransactionType.GIVE_TO_USERS, true);
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet spreadsheet = workbook.createSheet("تراکنش‌ها");
@@ -287,12 +291,12 @@ public class ListsPanel {
         out.close();
 
         SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Transactions.xlsx"));
-        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های تخصیص بودجه به خدام\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
+        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های تخصیص بودجه به خدام (فقط تراکنش‌های تایید شده)\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
         adminPanel.sendMessageToUser(sendDocument);
     }
 
     private void sendAllExpenditureTransactionsExcelFile() throws IOException {
-        ArrayList<Transaction> transactions = Loader.loadAllTransactions(TransactionType.EXPENDITURE);
+        ArrayList<Transaction> transactions = Loader.loadAllTransactions(TransactionType.EXPENDITURE, true);
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet spreadsheet = workbook.createSheet("تراکنش‌ها");
@@ -336,7 +340,7 @@ public class ListsPanel {
         out.close();
 
         SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Transactions.xlsx"));
-        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های انجام شده توسط خدام\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
+        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های انجام شده توسط خدام (فقط تراکنش‌های تایید شده)\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
         adminPanel.sendMessageToUser(sendDocument);
     }
 
@@ -384,7 +388,7 @@ public class ListsPanel {
             adminPanel.sendMessageToUser(sendMessage);
             return;
         }
-        ArrayList<Transaction> transactions = Loader.loadUserTransactions(user);
+        ArrayList<Transaction> transactions = Loader.loadUserTransactions(user, false);
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet spreadsheet = workbook.createSheet("تراکنش‌ها");
@@ -428,7 +432,7 @@ public class ListsPanel {
         out.close();
 
         SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Transactions.xlsx"));
-        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های انجام شده توسط خادم\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
+        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های انجام شده توسط خادم (تایید شده و تایید نشده)\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
         adminPanel.sendMessageToUser(sendDocument);
         showListsPanel();
     }
@@ -528,6 +532,63 @@ public class ListsPanel {
 
         SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Debtors.xlsx"));
         sendDocument.setCaption("خروجی اکسل لیست بدهکاران");
+        adminPanel.sendMessageToUser(sendDocument);
+    }
+
+    private void sendInCompleteTransactionsExcelFile() throws IOException {
+        ArrayList<Transaction> transactions = Loader.loadAllTransactions(false);
+        ArrayList<Transaction> inCompleteTransactions = new ArrayList<>();
+
+        for (Transaction transaction : transactions){
+            if (!transaction.isVerificated() || !transaction.isHasPaperInvoice()){
+                inCompleteTransactions.add(transaction);
+            }
+        }
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet spreadsheet = workbook.createSheet("تراکنش‌ها");
+
+        XSSFRow header = spreadsheet.createRow(0);
+        header.createCell(0).setCellValue("آیدی");
+        header.createCell(1).setCellValue("نام و نام خانوادگی کاربر");
+        header.createCell(2).setCellValue("نام‌ کاربری تلگرام کاربر");
+        header.createCell(3).setCellValue("مبلغ");
+        header.createCell(4).setCellValue("کارمزد");
+        header.createCell(5).setCellValue("تاریخ");
+        header.createCell(6).setCellValue("زمان");
+        header.createCell(7).setCellValue("وضعیت تایید");
+        header.createCell(8).setCellValue("دارای فاکتور کاغذی");
+        header.createCell(9).setCellValue("توضیحات کاربر");
+        header.createCell(10).setCellValue("توضیحات مدیر");
+        header.createCell(11).setCellValue("توضیحات داخلی مدیر");
+
+        for (int i = 1 ; i <= inCompleteTransactions.size() ; i++){
+            Transaction transaction = inCompleteTransactions.get(i-1);
+            XSSFRow row = spreadsheet.createRow(i);
+            row.createCell(0).setCellValue(String.valueOf(transaction.getId()));
+            row.createCell(1).setCellValue(transaction.getUser().getName());
+            row.createCell(2).setCellValue(transaction.getUser().getUsername());
+            row.createCell(3).setCellValue(String.valueOf(transaction.getAmount()));
+            row.createCell(4).setCellValue(String.valueOf(transaction.getFee()));
+            row.createCell(5).setCellValue(String.valueOf(transaction.getReadableDate()));
+            row.createCell(6).setCellValue(String.valueOf(transaction.getReadableTime()));
+            row.createCell(7).setCellValue(String.valueOf(transaction.isVerificated()));
+            row.createCell(8).setCellValue(String.valueOf(transaction.isHasPaperInvoice()));
+            row.createCell(9).setCellValue(String.valueOf(transaction.getDescription()));
+            row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
+            row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
+        }
+        spreadsheet.setRightToLeft(true);
+        File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
+        if (!file.exists()){
+            file.createNewFile();
+        }
+        FileOutputStream out = new FileOutputStream(file);
+        workbook.write(out);
+        out.close();
+
+        SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Transactions.xlsx"));
+        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های ناقص (تراکنش‌های تایید نشده یا بدون فاکتور کاغذی)\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
         adminPanel.sendMessageToUser(sendDocument);
     }
 

@@ -2,7 +2,8 @@ package controller.adminpanel;
 
 import controller.MainMenu;
 import controller.adminpanel.adddeleteadminspanel.AddDeleteAdminsPanel;
-import controller.adminpanel.adminEditTransactionPanel.AdminEditTransactionPanel;
+import controller.adminpanel.addtransactionpanel.AdminAddTransactionPanel;
+import controller.adminpanel.adminedittransactionpanel.AdminEditTransactionPanel;
 import controller.adminpanel.listspanel.ListsPanel;
 import database.Loader;
 import database.Saver;
@@ -27,6 +28,7 @@ public class AdminPanel {
     private final ListsPanel listsPanel;
     private final AdminEditTransactionPanel adminEditTransactionPanel;
     private final AddDeleteAdminsPanel addDeleteAdminsPanel;
+    private final AdminAddTransactionPanel adminAddTransactionPanel;
 
     public AdminPanel(MainMenu mainMenu) {
         this.mainMenu = mainMenu;
@@ -35,6 +37,7 @@ public class AdminPanel {
         this.listsPanel = new ListsPanel(this);
         this.adminEditTransactionPanel = new AdminEditTransactionPanel(this);
         this.addDeleteAdminsPanel = new AddDeleteAdminsPanel(this);
+        this.adminAddTransactionPanel = new AdminAddTransactionPanel(this);
     }
 
     public MainMenu getChat() {
@@ -53,50 +56,53 @@ public class AdminPanel {
         if (estate == AdminPanelEstate.ADMIN_PANEL){
             handleAdminPanelRequest(update);
         } else
-            if (estate == AdminPanelEstate.ADMIN_IS_ADDING_NEW_TRANSACTION){
-                addNewTransactionWithAdmin1(update);
+            if (estate == AdminPanelEstate.LISTS_PANEL){
+                listsPanel.handleNewUpdate(update);
             } else
-                if (estate == AdminPanelEstate.ADMIN_IS_ADDING_NEW_TRANSACTION_SENDING_USER_ID){
-                    addNewTransactionWithAdmin2(update);
+                if (estate == AdminPanelEstate.ASKING_FOR_TRANSACTION_INFO){
+                    showTransactionInfo(update);
                 } else
-                    if (estate == AdminPanelEstate.LISTS_PANEL){
-                        listsPanel.handleNewUpdate(update);
+                    if (estate == AdminPanelEstate.ASKING_FOR_TRANSACTION_INFO_FOR_EDIT){
+                        showAdminEditTransactionPanel(update);
                     } else
-                        if (estate == AdminPanelEstate.ASKING_FOR_TRANSACTION_INFO){
-                            showTransactionInfo(update);
+                        if (estate == AdminPanelEstate.ADMIN_EDIT_TRANSACTION_PANEL){
+                            adminEditTransactionPanel.handleNewUpdate(update);
                         } else
-                            if (estate == AdminPanelEstate.ASKING_FOR_TRANSACTION_INFO_FOR_EDIT){
-                                showAdminEditTransactionPanel(update);
+                            if (estate == AdminPanelEstate.ADD_DELETE_ADMINS_PANEL){
+                                addDeleteAdminsPanel.handleNewUpdate(update);
                             } else
-                                if (estate == AdminPanelEstate.ADMIN_EDIT_TRANSACTION_PANEL){
-                                    adminEditTransactionPanel.handleNewUpdate(update);
+                                if (estate == AdminPanelEstate.ADMIN_ADD_TRANSACTION_PANEL){
+                                    adminAddTransactionPanel.handleNewUpdate(update);
                                 } else
-                                    if (estate == AdminPanelEstate.ADD_DELETE_ADMINS_PANEL){
-                                        addDeleteAdminsPanel.handleNewUpdate(update);
-                                    }
+                                    if (estate == AdminPanelEstate.ADMIN_IS_ADDING_NEW_USER_SENDING_NAME){
+                                        saveNewUserName(update);
+                                    } else
+                                        if (estate == AdminPanelEstate.ADMIN_IS_ADDING_NEW_USER_FORWARDING_MESSAGE){
+                                            addNewUser(update);
+                                        }
     }
 
     private void handleAdminPanelRequest(Update update){
-//        if (update.getMessage().getText().equals("لیست طلبکاران")){//
-//            showListOfCreditors();
-//        } else
-//        if (update.getMessage().getText().equals("لیست بدهکاران")){//
-//            showListOfDebtors();
-//        } else
-        if (update.getMessage().getText().equals("مشاهده تراکنش")){//
+        if (update.getMessage().getText().equals("مشاهده تراکنش")){
             requestWantedTransactionID(1);
         } else
-        if (update.getMessage().getText().equals("ویرایش تراکنش")){//
+        if (update.getMessage().getText().equals("ویرایش تراکنش")){
             requestWantedTransactionID(2);
         } else
-        if (update.getMessage().getText().equals("تراکنش جدید (دادن بودجه)")){
-            showAddNewTransactionMessageWithAdmin();
-        } else
-        if (update.getMessage().getText().equals("لیست‌ها")){//
+        if (update.getMessage().getText().equals("لیست‌ها")){
             showListsPanel();
         } else
-        if (update.getMessage().getText().equals("مدیریت مدیران!")){//
+        if (update.getMessage().getText().equals("افزودن تراکنش")){
+            showAdminAddTransactionPanel();
+        } else
+        if (update.getMessage().getText().equals("مدیریت مدیران!")){
             showAddDeleteAdminsPanel(update);
+        } else
+        if (update.getMessage().getText().equals("تراز مالی")){
+            showBalance();
+        } else
+        if (update.getMessage().getText().equals("ثبت کاربر جدید")){
+            requestNewUserName();
         } else
         if (update.getMessage().getText().equals("بازگشت به منوی اصلی")){
             showMainMenu(update);
@@ -120,119 +126,22 @@ public class AdminPanel {
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
         KeyboardRow row3 = new KeyboardRow();
+        KeyboardRow row4 = new KeyboardRow();
         row1.add("لیست‌ها");
         row1.add("مشاهده تراکنش");
         row1.add("ویرایش تراکنش");
-        row2.add("تراکنش‌های کاربر");
-        row2.add("حذف تراکنش");
+        row2.add("تراز مالی");
+        row2.add("افزودن تراکنش");
         row2.add("مدیریت مدیران!");
-        row3.add("بازگشت به منوی اصلی");
+        row3.add("ثبت کاربر جدید");
+        row4.add("بازگشت به منوی اصلی");
         keyboard.add(row1);
         keyboard.add(row2);
         keyboard.add(row3);
+        keyboard.add(row4);
         keyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(keyboardMarkup);
         estate = AdminPanelEstate.ADMIN_PANEL;
-        mainMenu.sendMessageToUser(sendMessage);
-    }
-
-    private void showAddNewTransactionMessageWithAdmin(){
-        estate = AdminPanelEstate.ADMIN_IS_ADDING_NEW_TRANSACTION;
-
-        String messageText2 = "لطفا تصویر رسید را ارسال نموده و اطلاعات زیر را هر یک در خطوط جداگانه ارسال کنید (اعداد با ارقام انگلیسی).\n\n[مبلغ کل به ریال]\n[مبلغ کارمزد رابه ریال]\n[توضیحات مبلغ]";
-        SendMessage sendMessage2 = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText2);
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow row = new KeyboardRow();
-        row.add("انصراف");
-        keyboard.add(row);
-        keyboardMarkup.setKeyboard(keyboard);
-        sendMessage2.setReplyMarkup(keyboardMarkup);
-        mainMenu.sendMessageToUser(sendMessage2);
-    }
-
-    private void addNewTransactionWithAdmin1(Update update){
-        if (update.getMessage().getText() != null){
-            if (update.getMessage().getText().equals("انصراف")) {
-                showAdminPanel(update);
-                return;
-            }
-        }
-        try {
-            Scanner scanner = new Scanner(update.getMessage().getCaption());
-            String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
-            long amount = Long.parseLong(scanner.nextLine());
-            int fee = Integer.parseInt(scanner.nextLine());
-            String description = scanner.nextLine();
-
-            cachedInfo.add(photoFileID);
-            cachedInfo.add(String.valueOf(amount));
-            cachedInfo.add(String.valueOf(fee));
-            cachedInfo.add(description);
-        } catch (Exception e){
-            String messageText = "فرمت مشخصات وارد شده صحیح نیست، مجددا تلاش کنید.";
-            SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
-            mainMenu.sendMessageToUser(sendMessage);
-            return;
-        }
-        requestWantedTransactionUserNumericID();
-    }
-
-    private void addNewTransactionWithAdmin2(Update update){
-        if (update.getMessage().getText() != null){
-            if (update.getMessage().getText().equals("انصراف")) {
-                showAdminPanel(update);
-                return;
-            }
-        }
-        String userId = update.getMessage().getText();
-        long longId = 0;
-        User user = null;
-        try {
-            longId = Long.parseLong(userId);
-            user = Loader.loadUser(longId);
-        } catch (Exception e){
-            String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
-            SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
-            estate = AdminPanelEstate.ADMIN_IS_ADDING_NEW_TRANSACTION_SENDING_USER_ID;
-            mainMenu.sendMessageToUser(sendMessage);
-            return;
-        }
-        if (user == null){
-            String messageText = "کاربری با این مشخصات پیدا نشد، مجددا تلاش کنید.";
-            SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
-            estate = AdminPanelEstate.ADMIN_IS_ADDING_NEW_TRANSACTION_SENDING_USER_ID;
-            mainMenu.sendMessageToUser(sendMessage);
-            return;
-        }
-
-        Transaction transaction = new Transaction(user, Long.parseLong(cachedInfo.get(1)), Integer.parseInt(cachedInfo.get(2)), cachedInfo.get(3), TransactionType.GIVE_TO_USERS, cachedInfo.get(0));
-        user.getTransactionsIDsList().add(transaction.getId());
-        Saver.saveUser(user);
-        Saver.saveTransaction(transaction);
-        cachedInfo.clear();
-
-        String messageText = "تراکنش با موفقیت ثبت شد.";
-        SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
-        mainMenu.sendMessageToUser(sendMessage);
-
-        showAdminPanel(update);
-    }
-
-    private void requestWantedTransactionUserNumericID(){
-        estate = AdminPanelEstate.ADMIN_IS_ADDING_NEW_TRANSACTION_SENDING_USER_ID;
-        String messageText1 = Loader.getUsersIDsList();
-        SendMessage sendMessage1 = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText1);
-        mainMenu.sendMessageToUser(sendMessage1);
-        String messageText = "آیدی عددی کاربر مورد نظر را وارد کنید (با استفاده از لیست بالا):";
-        SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
-        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboard = new ArrayList<>();
-        KeyboardRow row = new KeyboardRow();
-        row.add("انصراف");
-        keyboard.add(row);
-        keyboardMarkup.setKeyboard(keyboard);
-        sendMessage.setReplyMarkup(keyboardMarkup);
         mainMenu.sendMessageToUser(sendMessage);
     }
 
@@ -268,7 +177,7 @@ public class AdminPanel {
         try {
             String transactionId = update.getMessage().getText();
             longId = Integer.parseInt(transactionId);
-            transaction = Loader.loadTransaction(longId);
+            transaction = Loader.loadTransaction(longId, false);
         } catch (Exception e){
             String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
             SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
@@ -277,7 +186,7 @@ public class AdminPanel {
             return;
         }
         if (transaction == null){
-            String messageText = "شما تراکنشی با این آیدی ندارید، مجددا تلاش کنید.";
+            String messageText = "تراکنشی با این آیدی یافت نشد، مجددا تلاش کنید.";
             SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
             estate = AdminPanelEstate.ASKING_FOR_TRANSACTION_INFO;
             sendMessageToUser(sendMessage);
@@ -303,7 +212,7 @@ public class AdminPanel {
         try {
             String transactionId = update.getMessage().getText();
             longId = Integer.parseInt(transactionId);
-            transaction = Loader.loadTransaction(longId);
+            transaction = Loader.loadTransaction(longId, false);
         } catch (Exception e){
             String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
             SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
@@ -311,7 +220,7 @@ public class AdminPanel {
             return;
         }
         if (transaction == null){
-            String messageText = "شما تراکنشی با این آیدی ندارید، مجددا تلاش کنید.";
+            String messageText = "تراکنشی با این آیدی یافت نشد، مجددا تلاش کنید.";
             SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
             sendMessageToUser(sendMessage);
             return;
@@ -330,6 +239,11 @@ public class AdminPanel {
         listsPanel.showListsPanel();
     }
 
+    private void showAdminAddTransactionPanel(){
+        estate = AdminPanelEstate.ADMIN_ADD_TRANSACTION_PANEL;
+        adminAddTransactionPanel.showAdminAddTransactionPanel();
+    }
+
     private void showAddDeleteAdminsPanel(Update update){
         estate = AdminPanelEstate.ADD_DELETE_ADMINS_PANEL;
         addDeleteAdminsPanel.showAddDeleteAdminsPanel(update);
@@ -337,5 +251,105 @@ public class AdminPanel {
 
     public void sendMessageToUser(Object object){
         mainMenu.sendMessageToUser(object);
+    }
+
+    private void showBalance(){
+        long balance = calculateBalance();
+        String messageText = "تراز مالی برابر است با: " + balance + " ریال";
+
+        SendMessage sendMessage = new SendMessage(String.valueOf(getChat().getChatID()), messageText);
+        sendMessageToUser(sendMessage);
+    }
+
+    private long calculateBalance(){
+        long balance = 0;
+        ArrayList<Transaction> transactions = Loader.loadAllTransactions(true);
+
+        for (Transaction transaction : transactions){
+            if (transaction.getType() == TransactionType.INCOME){
+                balance += transaction.getAmount();
+            } else
+            if (transaction.getType() == TransactionType.GIVE_TO_USERS){
+                balance -= (transaction.getAmount() + ((long) transaction.getFee()));
+            }
+        }
+
+        return balance;
+    }
+
+    private void requestNewUserName(){
+        estate = AdminPanelEstate.ADMIN_IS_ADDING_NEW_USER_SENDING_NAME;
+
+        String messageText = "نام و نام خانوادگی کاربر جدید را وارد کنید:";
+        SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        row.add("انصراف");
+        keyboard.add(row);
+        keyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(keyboardMarkup);
+        mainMenu.sendMessageToUser(sendMessage);
+    }
+
+    private void saveNewUserName(Update update){
+        if (update.getMessage().getText() != null){
+            if (update.getMessage().getText().equals("انصراف")) {
+                showAdminPanel(update);
+                return;
+            }
+        }
+
+        try {
+            String name = update.getMessage().getText();
+            cachedInfo.add(name);
+        } catch (Exception e){
+            String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
+            estate = AdminPanelEstate.ASKING_FOR_TRANSACTION_INFO;
+            sendMessageToUser(sendMessage);
+            return;
+        }
+
+        requestNewUserForwardedMessage();
+    }
+
+    private void requestNewUserForwardedMessage(){
+        estate = AdminPanelEstate.ADMIN_IS_ADDING_NEW_USER_FORWARDING_MESSAGE;
+
+        String messageText = "یک پیام از کاربر جدید برای بات فوروارد کنید:";
+        SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        row.add("انصراف");
+        keyboard.add(row);
+        keyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(keyboardMarkup);
+        mainMenu.sendMessageToUser(sendMessage);
+    }
+
+    private void addNewUser(Update update){
+        try {
+            org.telegram.telegrambots.meta.api.objects.User user = update.getMessage().getForwardFrom();
+            String username = user.getUserName();
+            long ID = user.getId();
+            String name = cachedInfo.get(0);
+            cachedInfo.clear();
+            User newUser = new User(ID, name, username, null, null);
+            Saver.saveUser(newUser);
+        } catch (Exception e){
+            e.printStackTrace();
+            String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(mainMenu.getChatID()), messageText);
+            estate = AdminPanelEstate.ASKING_FOR_TRANSACTION_INFO;
+            sendMessageToUser(sendMessage);
+            return;
+        }
+
+        String messageText = "کاربر جدید با موفقیت افزوده شد.";
+        SendMessage sendMessage = new SendMessage(String.valueOf(getChat().getChatID()), messageText);
+        sendMessageToUser(sendMessage);
+        showAdminPanel(update);
     }
 }

@@ -39,7 +39,7 @@ public class Loader extends IO{
         }
     }
 
-    public synchronized static ArrayList<Transaction> loadUserTransactions(User user){
+    public synchronized static ArrayList<Transaction> loadUserTransactions(User user, boolean verificated){
         ArrayList<Transaction> transactionsList = new ArrayList<>();
         for (int transactionID : user.getTransactionsIDsList()){
             ObjectMapper objectMapper = new ObjectMapper();
@@ -48,7 +48,13 @@ public class Loader extends IO{
             try {
                 Transaction transaction = objectMapper.readValue(new File(rootPath + "Transactions/"+transactionID+".json"), Transaction.class);
                 if (!transaction.isDeleted()){
-                    transactionsList.add(transaction);
+                    if (verificated){
+                        if (transaction.isVerificated()){
+                            transactionsList.add(transaction);
+                        }
+                    } else {
+                        transactionsList.add(transaction);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -58,7 +64,7 @@ public class Loader extends IO{
         return transactionsList;
     }
 
-    public synchronized static ArrayList<Transaction> loadAllTransactions(){
+    public synchronized static ArrayList<Transaction> loadAllTransactions(boolean verificated){
         ArrayList<Transaction> transactionsList = new ArrayList<>();
         File directory=new File(rootPath + "Transactions/");
         int fileCount= Objects.requireNonNull(directory.list()).length;
@@ -70,7 +76,13 @@ public class Loader extends IO{
             try {
                 Transaction transaction = objectMapper.readValue(new File("Database/Transactions/"+i+".json"), Transaction.class);
                 if (!transaction.isDeleted()){
-                    transactionsList.add(transaction);
+                    if (verificated){
+                        if (transaction.isVerificated()){
+                            transactionsList.add(transaction);
+                        }
+                    } else {
+                        transactionsList.add(transaction);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -80,7 +92,7 @@ public class Loader extends IO{
         return transactionsList;
     }
 
-    public synchronized static ArrayList<Transaction> loadAllTransactions(TransactionType type){
+    public synchronized static ArrayList<Transaction> loadAllTransactions(TransactionType type, boolean verificated){
         ArrayList<Transaction> transactionsList = new ArrayList<>();
         File directory=new File(rootPath + "Transactions/");
         int fileCount= Objects.requireNonNull(directory.list()).length;
@@ -92,7 +104,13 @@ public class Loader extends IO{
             try {
                 Transaction transaction = objectMapper.readValue(new File("Database/Transactions/"+i+".json"), Transaction.class);
                 if (transaction.getType() == type && !transaction.isDeleted()){
-                    transactionsList.add(transaction);
+                    if (verificated){
+                        if (transaction.isVerificated()){
+                            transactionsList.add(transaction);
+                        }
+                    } else {
+                        transactionsList.add(transaction);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -117,7 +135,7 @@ public class Loader extends IO{
         }
     }
 
-    public synchronized static Transaction loadTransaction(int id){
+    public synchronized static Transaction loadTransaction(int id, boolean verificated){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
@@ -125,7 +143,15 @@ public class Loader extends IO{
         try {
             transaction = objectMapper.readValue(new File(rootPath + "Transactions/"+id+".json"), Transaction.class);
             if (!transaction.isDeleted()){
-                return transaction;
+                if (verificated){
+                    if (transaction.isVerificated()){
+                        return transaction;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return transaction;
+                }
             } else {
                 return null;
             }

@@ -146,7 +146,7 @@ public class MainController extends TelegramLongPollingBot{
                 LocalDateTime to = LocalDateTime.of(nowTime.getYear(), nowTime.getDayOfMonth(), nowTime.getDayOfMonth(),
                         nowTime.getHour(), nowTime.getMinute(), nowTime.getSecond());
                 Duration duration = Duration.between(from, to);
-                if (duration.getSeconds() > 60) {
+                if (duration.getSeconds() > 3600) {
                     timeOuts.add(chat);
                 }
             }

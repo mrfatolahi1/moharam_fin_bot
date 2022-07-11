@@ -26,6 +26,7 @@ public class AddDeleteAdminsPanel {
             String messageText = "فقط فتح‌اللهی (@mrfatolahi1) می‌توانید ادمین ها را ویرایش کند :)";
             SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
             adminPanel.sendMessageToUser(sendMessage);
+            adminPanel.showAdminPanel(update);
             return;
         }
         SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), "یکی از گزینه‌ها را انتخاب کنید:");

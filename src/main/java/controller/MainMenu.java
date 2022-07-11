@@ -191,7 +191,7 @@ public class MainMenu {
     }
 
     private void sendAllUserTransactionsExcelFile(Update update) {
-        ArrayList<Transaction> transactions = Loader.loadUserTransactions(user);
+        ArrayList<Transaction> transactions = Loader.loadUserTransactions(user, false);
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet spreadsheet = workbook.createSheet("تراکنش‌ها");
@@ -234,7 +234,7 @@ public class MainMenu {
             out.close();
 
             SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Transactions.xlsx"));
-            sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های انجام شده توسط خادم\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
+            sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های انجام شده توسط خادم (تایید شده و تایید نشده)\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
             adminPanel.sendMessageToUser(sendDocument);
         } catch (IOException ignored){}
     }
@@ -299,7 +299,7 @@ public class MainMenu {
         }
         String messageText1 = "آیدی تراکنش‌های شما، اطلاعات کامل‌تر را می‌توانید از طریق گزینه «لیست تراکنش‌ها» در منوی اصلی ببینید.\n";
         for (int transactionID : user.getTransactionsIDsList()){
-            Transaction transaction = Loader.loadTransaction(transactionID);
+            Transaction transaction = Loader.loadTransaction(transactionID, false);
             if (transaction != null){
                 messageText1 = messageText1 + transactionID + ": " + transaction.getDescription() + "\n";
             }
@@ -337,7 +337,7 @@ public class MainMenu {
         try {
             String transactionId = update.getMessage().getText();
             longId = Integer.parseInt(transactionId);
-            transaction = Loader.loadTransaction(longId);
+            transaction = Loader.loadTransaction(longId, false);
         } catch (Exception e){
             String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
             SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
@@ -372,7 +372,7 @@ public class MainMenu {
         try {
             String transactionId = update.getMessage().getText();
             longId = Integer.parseInt(transactionId);
-            transaction = Loader.loadTransaction(longId);
+            transaction = Loader.loadTransaction(longId, false);
         } catch (Exception e){
             String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
             SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);

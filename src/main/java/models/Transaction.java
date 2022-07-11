@@ -36,7 +36,7 @@ public class Transaction {
         this.type = type;
         this.factorImageFileId = factorImageFileId;
         this.time = LocalDateTime.now();
-        this.verificated = false;
+        this.verificated = true;
         this.persianDate = PersianDate.now();
         this.adminDescription = "";
         this.adminInternalDescription = "";
