@@ -1,6 +1,7 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import database.Loader;
 import net.time4j.calendar.PersianCalendar;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class Transaction {
     public Transaction(){}
 
     public Transaction(User user, long amount, int fee, String description, TransactionType type, String factorImageFileId) {
-        File directory=new File("Database/Transactions/");
+        File directory=new File(Loader.rootPath + "Transactions/");
         int fileCount= Objects.requireNonNull(directory.list()).length;
         this.id = fileCount + 1;
         this.user = user;

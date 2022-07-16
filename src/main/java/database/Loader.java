@@ -74,7 +74,7 @@ public class Loader extends IO{
 
         for (int i = 1 ; i <= fileCount ; i++){
             try {
-                Transaction transaction = objectMapper.readValue(new File("Database/Transactions/"+i+".json"), Transaction.class);
+                Transaction transaction = objectMapper.readValue(new File(rootPath + "Transactions/"+i+".json"), Transaction.class);
                 if (!transaction.isDeleted()){
                     if (verificated){
                         if (transaction.isVerificated()){
@@ -102,7 +102,7 @@ public class Loader extends IO{
 
         for (int i = 1 ; i <= fileCount ; i++){
             try {
-                Transaction transaction = objectMapper.readValue(new File("Database/Transactions/"+i+".json"), Transaction.class);
+                Transaction transaction = objectMapper.readValue(new File(rootPath + "Transactions/"+i+".json"), Transaction.class);
                 if (transaction.getType() == type && !transaction.isDeleted()){
                     if (verificated){
                         if (transaction.isVerificated()){
@@ -165,7 +165,7 @@ public class Loader extends IO{
         File directory = new File(rootPath + "Users");
 
         for (String fileName : directory.list()){
-            String filePath = "Database/Users/" + fileName;
+            String filePath = rootPath + "Users/" + fileName;
             usersList.add(loadUser(filePath));
         }
 
@@ -226,6 +226,10 @@ public class Loader extends IO{
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String getRootPath(){
+        return rootPath;
     }
 
 }
