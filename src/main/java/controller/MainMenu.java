@@ -103,7 +103,8 @@ public class MainMenu {
 
     private void handleMainMenuRequest(Update update){
         if (update.getMessage().getText().equals("تراکنش جدید")){
-            showAddNewTransactionMessageForUser();
+            showBlockadeMessage(update);
+//            showAddNewTransactionMessageForUser();
         } else
         if (update.getMessage().getText().equals("لیست تراکنش‌ها")){
             sendAllUserTransactionsExcelFile(update);
@@ -112,7 +113,8 @@ public class MainMenu {
             requestWantedTransactionID(1);
         } else
         if (update.getMessage().getText().equals("ویرایش تراکنش")){
-            requestWantedTransactionID(2);
+            showBlockadeMessage(update);
+//            requestWantedTransactionID(2);
         } else
         if (update.getMessage().getText().equals("تراز مالی")){
             showUserBalance(update);
@@ -389,6 +391,13 @@ public class MainMenu {
         }
         this.estate = MainMenuEstate.USER_EDIT_TRANSACTION_PANEL;
         userEditTransactionPanel.showUserEditTransactionPanel(transaction.getId());
+    }
+
+    private void showBlockadeMessage(Update update){
+        String messageText = "در حال حاضر امکان دسترسی خدام به این قابلیت وجود ندارد و تراکنش‌های آنان توسط مدیران ثبت خواهد شد.";
+
+        SendMessage sendMessage = new SendMessage(String.valueOf(chatID), messageText);
+        sendMessageToUser(sendMessage);
     }
 
     public long getChatID() {
