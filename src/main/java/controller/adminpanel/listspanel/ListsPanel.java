@@ -329,7 +329,7 @@ public class ListsPanel {
             row.createCell(8).setCellValue(String.valueOf(transaction.isHasPaperInvoice()));
             row.createCell(9).setCellValue(String.valueOf(transaction.getDescription()));
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
-            row.createCell(10).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
+            row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){

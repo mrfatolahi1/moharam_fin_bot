@@ -19,7 +19,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class AdminPanel {
     private final MainMenu mainMenu;
@@ -98,8 +97,8 @@ public class AdminPanel {
         if (update.getMessage().getText().equals("مدیریت مدیران!")){
             showAddDeleteAdminsPanel(update);
         } else
-        if (update.getMessage().getText().equals("تراز مالی")){
-            showBalance();
+        if (update.getMessage().getText().equals("اطلاعات مالی")){
+            showFinInfo();
         } else
         if (update.getMessage().getText().equals("ثبت کاربر جدید")){
             requestNewUserName();
@@ -130,7 +129,7 @@ public class AdminPanel {
         row1.add("لیست‌ها");
         row1.add("مشاهده تراکنش");
         row1.add("ویرایش تراکنش");
-        row2.add("تراز مالی");
+        row2.add("اطلاعات مالی");
         row2.add("افزودن تراکنش");
         row2.add("مدیریت مدیران!");
         row3.add("ثبت کاربر جدید");
@@ -253,28 +252,40 @@ public class AdminPanel {
         mainMenu.sendMessageToUser(object);
     }
 
-    private void showBalance(){
-        long balance = calculateBalance();
-        String messageText = "تراز مالی برابر است با: " + balance + " ریال";
+    private void showFinInfo(){
+        String info = calculateFinInfo();
+        String messageText = "اطلاعات مالی به شرح زیر است (مبالغ به ریال):" + "\n\n" + info;
 
         SendMessage sendMessage = new SendMessage(String.valueOf(getChat().getChatID()), messageText);
         sendMessageToUser(sendMessage);
     }
 
-    private long calculateBalance(){
+    private String calculateFinInfo(){
         long balance = 0;
+        long incomeSum = 0;
+        long giveToUsersSum = 0;
+        long expenditureSum = 0;
         ArrayList<Transaction> transactions = Loader.loadAllTransactions(true);
 
         for (Transaction transaction : transactions){
             if (transaction.getType() == TransactionType.INCOME){
+                incomeSum += transaction.getAmount();
                 balance += transaction.getAmount();
             } else
             if (transaction.getType() == TransactionType.GIVE_TO_USERS){
+                giveToUsersSum += (transaction.getAmount() + ((long) transaction.getFee()));
                 balance -= (transaction.getAmount() + ((long) transaction.getFee()));
+            } else
+            if (transaction.getType() == TransactionType.EXPENDITURE){
+                expenditureSum += transaction.getAmount();
             }
         }
+        String balanceInfo = "تراز مالی (تراکنش‌های ورودی منهای تراکنش‌های تخصیص داده شده به خدام): " + balance;
+        String incomeInfo = "مجموع تراکنش‌های ورودی: " + incomeSum;
+        String giveToUsersInfo = "مجموع تراکنش‌های تخصیص داده‌شده به خدام: " + giveToUsersSum;
+        String expenditureInfo = "مجموع تراکنش‌های خرج شده توسط خدام: " + expenditureSum;
 
-        return balance;
+        return balanceInfo + "\n" + incomeInfo + "\n" + giveToUsersInfo + "\n" + expenditureInfo;
     }
 
     private void requestNewUserName(){

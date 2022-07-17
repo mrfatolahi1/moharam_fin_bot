@@ -75,9 +75,9 @@ public class User {
         long balance = 0;
 
         for (Transaction transaction : transactionsList){
-            if (transaction.getType() == TransactionType.INCOME){
+            if (transaction.getType() == TransactionType.GIVE_TO_USERS){
                 balance += transaction.getAmount();
-            } else {
+            } else if (transaction.getType() == TransactionType.EXPENDITURE){
                 balance -= transaction.getAmount();
             }
         }

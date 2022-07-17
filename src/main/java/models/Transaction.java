@@ -143,9 +143,12 @@ public class Transaction {
 
     public static String getPersianType(TransactionType type){
         if (type == TransactionType.EXPENDITURE){
-            return "دادن بودجه به خدام";
-        }
-        return "خرج شده توسط خدام";
+            return "خرج شده توسط خدام";
+        } else
+            if (type == TransactionType.INCOME){
+                return "ورودی";
+            }
+        return "تخصیص بودجه به خدام";
     }
 
     public String getAdminInternalDescription() {

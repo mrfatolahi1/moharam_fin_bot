@@ -47,6 +47,7 @@ public class AdminAddTransactionPanel {
     }
 
     public void handleNewUpdate(Update update){
+        System.out.println("estate = " + estate);
         if (estate == AdminAddTransactionPanelEstate.ADMIN_ADD_TRANSACTION_PANEL){
             handleAdminAddTransactionPanelRequest(update);
         } else
@@ -269,7 +270,7 @@ public class AdminAddTransactionPanel {
     }
 
     private void requestExpenditureTransactionUserNumericID(){
-        estate = AdminAddTransactionPanelEstate.ADMIN_IS_ADDING_NEW_GIVE_TO_USERS_TRANSACTION_SENDING_USER_ID;
+        estate = AdminAddTransactionPanelEstate.ADMIN_IS_ADDING_NEW_EXPENDITURE_TRANSACTION_SENDING_USER_ID;
         String messageText1 = Loader.getUsersIDsList();
         SendMessage sendMessage1 = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText1);
         adminPanel.sendMessageToUser(sendMessage1);
@@ -286,6 +287,7 @@ public class AdminAddTransactionPanel {
     }
 
     private void addNewExpenditureTransaction(Update update){
+        System.out.println("AAAA");
         if (update.getMessage().getText() != null){
             if (update.getMessage().getText().equals("انصراف")) {
                 showAdminAddTransactionPanel();
@@ -299,16 +301,17 @@ public class AdminAddTransactionPanel {
             longId = Long.parseLong(userId);
             user = Loader.loadUser(longId);
         } catch (Exception e){
+            e.printStackTrace();
             String messageText = "فرمت اطلاعات وارد شده صحیح نیست، مجددا تلاش کنید.";
             SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
-            estate = AdminAddTransactionPanelEstate.ADMIN_IS_ADDING_NEW_GIVE_TO_USERS_TRANSACTION_SENDING_USER_ID;
+            estate = AdminAddTransactionPanelEstate.ADMIN_IS_ADDING_NEW_EXPENDITURE_TRANSACTION_SENDING_USER_ID;
             adminPanel.sendMessageToUser(sendMessage);
             return;
         }
         if (user == null){
             String messageText = "کاربری با این مشخصات پیدا نشد، مجددا تلاش کنید.";
             SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
-            estate = AdminAddTransactionPanelEstate.ADMIN_IS_ADDING_NEW_GIVE_TO_USERS_TRANSACTION_SENDING_USER_ID;
+            estate = AdminAddTransactionPanelEstate.ADMIN_IS_ADDING_NEW_EXPENDITURE_TRANSACTION_SENDING_USER_ID;
             adminPanel.sendMessageToUser(sendMessage);
             return;
         }
