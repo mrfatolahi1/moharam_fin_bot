@@ -26,7 +26,7 @@ public class AdminAddTransactionPanel {
     }
 
     public void showAdminAddTransactionPanel(){
-        SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), "قسمت مورد نظر جهت ویرایش را انتخاب کنید:");
+        SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), "قسمت مورد نظر را انتخاب کنید:");
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow row1 = new KeyboardRow();
@@ -107,6 +107,7 @@ public class AdminAddTransactionPanel {
                 return;
             }
         }
+        int transactionId = 0;
         try {
             Scanner scanner = new Scanner(update.getMessage().getCaption());
             String photoFileID = update.getMessage().getPhoto().get(0).getFileId();
@@ -114,6 +115,7 @@ public class AdminAddTransactionPanel {
             String description = scanner.nextLine();
 
             Transaction transaction = new Transaction(null, amount, 0, description, TransactionType.INCOME, photoFileID);
+            transactionId = transaction.getId();
             Saver.saveTransaction(transaction);
         } catch (Exception e){
             String messageText = "فرمت مشخصات وارد شده صحیح نیست، مجددا تلاش کنید.";
@@ -121,7 +123,7 @@ public class AdminAddTransactionPanel {
             adminPanel.sendMessageToUser(sendMessage);
             return;
         }
-        String messageText = "تراکنش با موفقیت ثبت شد.";
+        String messageText = "تراکنش با موفقیت ثبت شد.\n" + "آیدی تراکنش: " + transactionId;
         SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
         adminPanel.sendMessageToUser(sendMessage);
         showAdminAddTransactionPanel();
@@ -220,7 +222,7 @@ public class AdminAddTransactionPanel {
         Saver.saveTransaction(transaction);
         cachedInfo.clear();
 
-        String messageText = "تراکنش با موفقیت ثبت شد.";
+        String messageText = "تراکنش با موفقیت ثبت شد.\n" + "آیدی تراکنش: " + transaction.getId();
         SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
         adminPanel.sendMessageToUser(sendMessage);
 
@@ -322,7 +324,7 @@ public class AdminAddTransactionPanel {
         Saver.saveTransaction(transaction);
         cachedInfo.clear();
 
-        String messageText = "تراکنش با موفقیت ثبت شد.";
+        String messageText = "تراکنش با موفقیت ثبت شد.\n" + "آیدی تراکنش: " + transaction.getId();
         SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
         adminPanel.sendMessageToUser(sendMessage);
 

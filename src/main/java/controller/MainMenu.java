@@ -68,6 +68,7 @@ public class MainMenu {
             }
         }
         System.out.println("update.getMessage().getChatId() = " + update.getMessage().getChatId());
+        System.out.println("update.getMessage().getFrom().getUserName() = " + update.getMessage().getFrom().getUserName());
         System.out.println();
         this.lastActionTime = LocalDateTime.now();
         this.hasActiveSession = true;
@@ -118,7 +119,10 @@ public class MainMenu {
         } else
         if (update.getMessage().getText().equals("تراز مالی")){
             showUserBalance(update);
-        } else
+        }/* else
+        if (update.getMessage().getText().equals("ویرایش مشخصات")){
+            showUserBalance(update);ییس
+        }*/ else
         if (update.getMessage().getText().equals("پنل مدیریت")){
             showAdminPanel(update);
         } else {
@@ -164,14 +168,17 @@ public class MainMenu {
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow row1 = new KeyboardRow();
         KeyboardRow row2 = new KeyboardRow();
+//        KeyboardRow row3 = new KeyboardRow();
         row1.add("تراکنش جدید");
         row1.add("لیست تراکنش‌ها");
         row1.add("مشاهده تراکنش");
         row2.add("ویرایش تراکنش");
         row2.add("تراز مالی");
         row2.add("پنل مدیریت");
+//        row3.add("ویرایش مشخصات");
         keyboard.add(row1);
         keyboard.add(row2);
+//        keyboard.add(row3);
         keyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(keyboardMarkup);
         estate = MainMenuEstate.MAIN_MENU;

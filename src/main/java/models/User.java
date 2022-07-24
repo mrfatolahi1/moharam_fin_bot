@@ -9,6 +9,9 @@ public class User {
     private String username;
     private String email;
     private String phoneNumber;
+    private String cardNumber;
+    private String accountNumber;
+    private String shabaNumber;
     private ArrayList<Integer> transactionsIDsList;
 
     public User() {}
@@ -70,6 +73,30 @@ public class User {
         this.transactionsIDsList = transactionsIDsList;
     }
 
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public String getShabaNumber() {
+        return shabaNumber;
+    }
+
+    public void setShabaNumber(String shabaNumber) {
+        this.shabaNumber = shabaNumber;
+    }
+
     public long calculateBalance(){
         ArrayList<Transaction> transactionsList = Loader.loadUserTransactions(this, true);
         long balance = 0;
@@ -93,6 +120,9 @@ public class User {
                 "نام‌کاربری تلگرام: " + "@" + username + '\n' +
                 "ایمیل: " + email + '\n' +
                 "شماره همراه: " + phoneNumber + '\n' +
+                "شماره کارت: " + cardNumber + '\n' +
+                "شماره حساب: " + accountNumber + '\n' +
+                "شماره شبا: " + shabaNumber + '\n' +
                 "تراز مالی: " + calculateBalance();
     }
 }

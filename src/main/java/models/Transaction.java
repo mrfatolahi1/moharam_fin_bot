@@ -2,7 +2,6 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import database.Loader;
-import net.time4j.calendar.PersianCalendar;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -20,6 +19,7 @@ public class Transaction {
     private String factorImageFileId;
     private LocalDateTime time;
     private PersianDate persianDate;
+    private String committee;
     private boolean verificated;
     private boolean hasPaperInvoice;
     private boolean deleted;
@@ -43,6 +43,7 @@ public class Transaction {
         this.adminInternalDescription = "";
         this.hasPaperInvoice = false;
         this.deleted = false;
+        this.committee = null;
     }
 
     public int getId() {
@@ -159,6 +160,14 @@ public class Transaction {
         this.adminInternalDescription = adminInternalDescription;
     }
 
+    public String getCommittee() {
+        return committee;
+    }
+
+    public void setCommittee(String committee) {
+        this.committee = committee;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
@@ -185,6 +194,7 @@ public class Transaction {
                         + getTime().getSecond() + "\n"
                         + "وضعیت تایید: " + isVerificated() + "\n"
                         + "دارای فاکتور کاغذی: " + isHasPaperInvoice() + "\n"
+                        + "بخش: " + committee + "\n"
                         + "توضیحات: " + description + "\n"
                         + "توضیحات مدیر: " +adminDescription;
     }
@@ -206,6 +216,7 @@ public class Transaction {
                         + getTime().getSecond() + "\n"
                         + "وضعیت تایید: " + isVerificated() + "\n"
                         + "دارای فاکتور کاغذی: " + isHasPaperInvoice() + "\n"
+                        + "بخش: " + committee + "\n"
                         + "توضیحات: " + description + "\n"
                         + "توضیحات مدیر: " +adminDescription + "\n"
                         + "توضیحات داخلی مدیر: " +adminInternalDescription;

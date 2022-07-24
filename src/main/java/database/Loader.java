@@ -232,4 +232,14 @@ public class Loader extends IO{
         return rootPath;
     }
 
+    public static ArrayList<String> loadCommiteesList(){
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+            return objectMapper.readValue(new File("src/main/resources/Commitees.json"), ArrayList.class);
+        } catch (IOException e){
+            return null;
+        }
+    }
 }
