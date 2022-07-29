@@ -7,6 +7,8 @@ import models.Transaction;
 import models.TransactionType;
 import models.User;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -225,6 +227,7 @@ public class AdminAddTransactionPanel {
         String messageText = "تراکنش با موفقیت ثبت شد.\n" + "آیدی تراکنش: " + transaction.getId();
         SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
         adminPanel.sendMessageToUser(sendMessage);
+        sendTransactionConfirmation(transaction);
 
         showAdminAddTransactionPanel();
     }
@@ -326,9 +329,16 @@ public class AdminAddTransactionPanel {
 
         String messageText = "تراکنش با موفقیت ثبت شد.\n" + "آیدی تراکنش: " + transaction.getId();
         SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
-        adminPanel.sendMessageToUser(sendMessage);
 
+        adminPanel.sendMessageToUser(sendMessage);
+        sendTransactionConfirmation(transaction);
         showAdminAddTransactionPanel();
+    }
+
+    private void sendTransactionConfirmation(Transaction transaction){
+        SendPhoto sendPhoto = new SendPhoto(String.valueOf(transaction.getUser().getId()), new InputFile(transaction.getFactorImageFileId()));
+        sendPhoto.setCaption("تراکنش‌ زیر توسط مدیر برای شما ثبت شده است، در صورت هر گونه مغایرت مراتب را سریعا به پشتیبانی بات اطلاع دهید. \n\n" + transaction.toString());
+        adminPanel.sendMessageToUser(sendPhoto);
     }
 
     private void showAdminPanel(Update update){

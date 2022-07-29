@@ -1,5 +1,6 @@
 package controller.adminpanel;
 
+import com.google.common.cache.LoadingCache;
 import controller.MainMenu;
 import controller.adminpanel.adddeleteadminspanel.AddDeleteAdminsPanel;
 import controller.adminpanel.addtransactionpanel.AdminAddTransactionPanel;
@@ -280,12 +281,25 @@ public class AdminPanel {
                 expenditureSum += transaction.getAmount();
             }
         }
-        String balanceInfo = "تراز مالی (تراکنش‌های ورودی منهای تراکنش‌های تخصیص داده شده به خدام): " + balance;
-        String incomeInfo = "مجموع تراکنش‌های ورودی: " + incomeSum;
-        String giveToUsersInfo = "مجموع تراکنش‌های تخصیص داده‌شده به خدام: " + giveToUsersSum;
-        String expenditureInfo = "مجموع تراکنش‌های خرج شده توسط خدام: " + expenditureSum;
+        String balanceInfo = "پول باقی‌مانده در حساب: " + balance;
+        String incomeInfo = "مجموع پول ورودی: " + incomeSum;
+        String giveToUsersInfo = "مجموع پول‌هایی که به خدام داده شده: " + giveToUsersSum;
+        String expenditureInfo = "مجموع پول‌های خرج شده توسط خدام: " + expenditureSum;
+////        Loader.
+//        long debt = giveToUsersSum - expenditureSum;
+//
+//        String debtInfo = "";
+//
+//        if (debt > 0){
+//            debtInfo = "مجموعا " + debt + " ریال از خدام طلبکار هستیم.";
+//        } else
+//            if (debt < 0){
+//                debtInfo = "مجموعا " + debt + " ریال به خدام بدهکار هستیم.";
+//            } else {
+//                debtInfo = "خدام برای همه مبالغ اخذشده فاکتور ارائه کرده‌اند.";
+//            }
 
-        return balanceInfo + "\n" + incomeInfo + "\n" + giveToUsersInfo + "\n" + expenditureInfo;
+        return balanceInfo + "\n" + incomeInfo + "\n" + giveToUsersInfo + "\n" + expenditureInfo/* + "\n\n" + debtInfo*/;
     }
 
     private void requestNewUserName(){

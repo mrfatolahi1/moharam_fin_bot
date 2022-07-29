@@ -64,6 +64,37 @@ public class Loader extends IO{
         return transactionsList;
     }
 
+    public synchronized static ArrayList<Transaction> loadCommiteeTransactions(String commiteeName, boolean verificated){
+        ArrayList<Transaction> transactionsList = new ArrayList<>();
+        File directory=new File(rootPath + "Transactions/");
+        int fileCount= Objects.requireNonNull(directory.list()).length;
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+
+        for (int i = 1 ; i <= fileCount ; i++){
+            try {
+                Transaction transaction = objectMapper.readValue(new File(rootPath + "Transactions/"+i+".json"), Transaction.class);
+                if (transaction.getCommittee() == null){
+                    continue;
+                }
+                if (transaction.getCommittee().equals(commiteeName) && !transaction.isDeleted()){
+                    if (verificated){
+                        if (transaction.isVerificated()){
+                            transactionsList.add(transaction);
+                        }
+                    } else {
+                        transactionsList.add(transaction);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return transactionsList;
+    }
+
     public synchronized static ArrayList<Transaction> loadAllTransactions(boolean verificated){
         ArrayList<Transaction> transactionsList = new ArrayList<>();
         File directory=new File(rootPath + "Transactions/");

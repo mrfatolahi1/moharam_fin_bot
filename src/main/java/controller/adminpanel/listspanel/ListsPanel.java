@@ -44,6 +44,13 @@ public class ListsPanel {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else
+        if (estate == ListsPanelEstate.ADMIN_IS_ASKING_FOR_ONE_COMMITEE_TRANSACTIONS){
+            try {
+                sendAllCpmmiteeTransactionsExcelFile(update);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -55,6 +62,7 @@ public class ListsPanel {
         KeyboardRow row2 = new KeyboardRow();
         KeyboardRow row3 = new KeyboardRow();
         KeyboardRow row4 = new KeyboardRow();
+        KeyboardRow row5 = new KeyboardRow();
         row1.add("لیست طلبکاران");
         row1.add("لیست بدهکاران");
         row1.add("لیست کاربران");
@@ -64,11 +72,13 @@ public class ListsPanel {
         row3.add("کل تراکنش‌ها");
         row3.add("تراکنش‌های ناقص");
         row3.add("تراکنش‌های کاربر");
+        row5.add("تراکنش‌های یک بخش خاص");
         row4.add("بازگشت به پنل مدیریت");
         keyboard.add(row1);
         keyboard.add(row2);
         keyboard.add(row3);
         keyboard.add(row4);
+        keyboard.add(row5);
         keyboardMarkup.setKeyboard(keyboard);
         sendMessage.setReplyMarkup(keyboardMarkup);
         estate = ListsPanelEstate.EXCEL_OUTPUT_PANEL;
@@ -103,6 +113,9 @@ public class ListsPanel {
         if (update.getMessage().getText().equals("لیست بدهکاران")){
             sendListOfDebtorsExcelFile();
         } else
+        if (update.getMessage().getText().equals("تراکنش‌های یک بخش خاص")){
+            requestWantedCommiteeName();
+        } else
         if (update.getMessage().getText().equals("بازگشت به پنل مدیریت")){
             showAdminPanel(update);
         } else {
@@ -132,7 +145,7 @@ public class ListsPanel {
             row.createCell(2).setCellValue(user.getUsername());
             row.createCell(3).setCellValue(user.getEmail());
             row.createCell(4).setCellValue(user.getPhoneNumber());
-            row.createCell(5).setCellValue(String.valueOf(user.calculateBalance()));
+            row.createCell(5).setCellValue(user.calculateBalance());
         }
         spreadsheet.setRightToLeft(true);
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
@@ -168,6 +181,7 @@ public class ListsPanel {
         header.createCell(10).setCellValue("توضیحات مدیر");
         header.createCell(11).setCellValue("توضیحات داخلی مدیر");
         header.createCell(12).setCellValue("بخش");
+        header.createCell(13).setCellValue("نوع");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -180,8 +194,8 @@ public class ListsPanel {
                 row.createCell(1).setCellValue("ندارد");
                 row.createCell(2).setCellValue("ندارد");
             }
-            row.createCell(3).setCellValue(String.valueOf(transaction.getAmount()));
-            row.createCell(4).setCellValue(String.valueOf(transaction.getFee()));
+            row.createCell(3).setCellValue(transaction.getAmount());
+            row.createCell(4).setCellValue(transaction.getFee());
             row.createCell(5).setCellValue(String.valueOf(transaction.getReadableDate()));
             row.createCell(6).setCellValue(String.valueOf(transaction.getReadableTime()));
             row.createCell(7).setCellValue(String.valueOf(transaction.isVerificated()));
@@ -190,6 +204,7 @@ public class ListsPanel {
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
             row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
             row.createCell(12).setCellValue(String.valueOf(transaction.getCommittee()));
+            row.createCell(13).setCellValue(Transaction.getPersianType(transaction.getType()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -224,6 +239,7 @@ public class ListsPanel {
         header.createCell(10).setCellValue("توضیحات مدیر");
         header.createCell(11).setCellValue("توضیحات داخلی مدیر");
         header.createCell(12).setCellValue("بخش");
+        header.createCell(13).setCellValue("نوع");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -236,8 +252,8 @@ public class ListsPanel {
                 row.createCell(1).setCellValue("ندارد");
                 row.createCell(2).setCellValue("ندارد");
             }
-            row.createCell(3).setCellValue(String.valueOf(transaction.getAmount()));
-            row.createCell(4).setCellValue(String.valueOf(transaction.getFee()));
+            row.createCell(3).setCellValue(transaction.getAmount());
+            row.createCell(4).setCellValue(transaction.getFee());
             row.createCell(5).setCellValue(String.valueOf(transaction.getReadableDate()));
             row.createCell(6).setCellValue(String.valueOf(transaction.getReadableTime()));
             row.createCell(7).setCellValue(String.valueOf(transaction.isVerificated()));
@@ -246,6 +262,7 @@ public class ListsPanel {
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
             row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
             row.createCell(12).setCellValue(String.valueOf(transaction.getCommittee()));
+            row.createCell(13).setCellValue(Transaction.getPersianType(transaction.getType()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -280,6 +297,7 @@ public class ListsPanel {
         header.createCell(10).setCellValue("توضیحات مدیر");
         header.createCell(11).setCellValue("توضیحات داخلی مدیر");
         header.createCell(12).setCellValue("بخش");
+        header.createCell(13).setCellValue("نوع");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -292,8 +310,8 @@ public class ListsPanel {
                 row.createCell(1).setCellValue("ندارد");
                 row.createCell(2).setCellValue("ندارد");
             }
-            row.createCell(3).setCellValue(String.valueOf(transaction.getAmount()));
-            row.createCell(4).setCellValue(String.valueOf(transaction.getFee()));
+            row.createCell(3).setCellValue(transaction.getAmount());
+            row.createCell(4).setCellValue(transaction.getFee());
             row.createCell(5).setCellValue(String.valueOf(transaction.getReadableDate()));
             row.createCell(6).setCellValue(String.valueOf(transaction.getReadableTime()));
             row.createCell(7).setCellValue(String.valueOf(transaction.isVerificated()));
@@ -302,6 +320,7 @@ public class ListsPanel {
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
             row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
             row.createCell(12).setCellValue(String.valueOf(transaction.getCommittee()));
+            row.createCell(13).setCellValue(Transaction.getPersianType(transaction.getType()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -336,6 +355,7 @@ public class ListsPanel {
         header.createCell(10).setCellValue("توضیحات مدیر");
         header.createCell(11).setCellValue("توضیحات داخلی مدیر");
         header.createCell(12).setCellValue("بخش");
+        header.createCell(13).setCellValue("نوع");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -348,8 +368,8 @@ public class ListsPanel {
                 row.createCell(1).setCellValue("ندارد");
                 row.createCell(2).setCellValue("ندارد");
             }
-            row.createCell(3).setCellValue(String.valueOf(transaction.getAmount()));
-            row.createCell(4).setCellValue(String.valueOf(transaction.getFee()));
+            row.createCell(3).setCellValue(transaction.getAmount());
+            row.createCell(4).setCellValue(transaction.getFee());
             row.createCell(5).setCellValue(String.valueOf(transaction.getReadableDate()));
             row.createCell(6).setCellValue(String.valueOf(transaction.getReadableTime()));
             row.createCell(7).setCellValue(String.valueOf(transaction.isVerificated()));
@@ -358,6 +378,7 @@ public class ListsPanel {
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
             row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
             row.createCell(12).setCellValue(String.valueOf(transaction.getCommittee()));
+            row.createCell(13).setCellValue(Transaction.getPersianType(transaction.getType()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -435,6 +456,7 @@ public class ListsPanel {
         header.createCell(10).setCellValue("توضیحات مدیر");
         header.createCell(11).setCellValue("توضیحات داخلی مدیر");
         header.createCell(12).setCellValue("بخش");
+        header.createCell(13).setCellValue("نوع");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -447,8 +469,8 @@ public class ListsPanel {
                 row.createCell(1).setCellValue("ندارد");
                 row.createCell(2).setCellValue("ندارد");
             }
-            row.createCell(3).setCellValue(String.valueOf(transaction.getAmount()));
-            row.createCell(4).setCellValue(String.valueOf(transaction.getFee()));
+            row.createCell(3).setCellValue(transaction.getAmount());
+            row.createCell(4).setCellValue(transaction.getFee());
             row.createCell(5).setCellValue(String.valueOf(transaction.getReadableDate()));
             row.createCell(6).setCellValue(String.valueOf(transaction.getReadableTime()));
             row.createCell(7).setCellValue(String.valueOf(transaction.isVerificated()));
@@ -457,6 +479,7 @@ public class ListsPanel {
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
             row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
             row.createCell(12).setCellValue(String.valueOf(transaction.getCommittee()));
+            row.createCell(13).setCellValue(Transaction.getPersianType(transaction.getType()));
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){
@@ -505,7 +528,7 @@ public class ListsPanel {
             row.createCell(2).setCellValue(user.getUsername());
             row.createCell(3).setCellValue(user.getEmail());
             row.createCell(4).setCellValue(user.getPhoneNumber());
-            row.createCell(5).setCellValue(String.valueOf(user.calculateBalance()));
+            row.createCell(5).setCellValue(user.calculateBalance());
         }
         spreadsheet.setRightToLeft(true);
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
@@ -554,7 +577,7 @@ public class ListsPanel {
             row.createCell(2).setCellValue(user.getUsername());
             row.createCell(3).setCellValue(user.getEmail());
             row.createCell(4).setCellValue(user.getPhoneNumber());
-            row.createCell(5).setCellValue(String.valueOf(user.calculateBalance()));
+            row.createCell(5).setCellValue(user.calculateBalance());
         }
         spreadsheet.setRightToLeft(true);
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
@@ -571,7 +594,7 @@ public class ListsPanel {
     }
 
     private void sendInCompleteTransactionsExcelFile() throws IOException {
-        ArrayList<Transaction> transactions = Loader.loadAllTransactions(false);
+        ArrayList<Transaction> transactions = Loader.loadAllTransactions(TransactionType.EXPENDITURE, false);
         ArrayList<Transaction> inCompleteTransactions = new ArrayList<>();
 
         for (Transaction transaction : transactions){
@@ -597,6 +620,7 @@ public class ListsPanel {
         header.createCell(10).setCellValue("توضیحات مدیر");
         header.createCell(11).setCellValue("توضیحات داخلی مدیر");
         header.createCell(12).setCellValue("بخش");
+        header.createCell(13).setCellValue("نوع");
 
         for (int i = 1 ; i <= inCompleteTransactions.size() ; i++){
             Transaction transaction = inCompleteTransactions.get(i-1);
@@ -609,8 +633,8 @@ public class ListsPanel {
                 row.createCell(1).setCellValue("ندارد");
                 row.createCell(2).setCellValue("ندارد");
             }
-            row.createCell(3).setCellValue(String.valueOf(transaction.getAmount()));
-            row.createCell(4).setCellValue(String.valueOf(transaction.getFee()));
+            row.createCell(3).setCellValue(transaction.getAmount());
+            row.createCell(4).setCellValue(transaction.getFee());
             row.createCell(5).setCellValue(String.valueOf(transaction.getReadableDate()));
             row.createCell(6).setCellValue(String.valueOf(transaction.getReadableTime()));
             row.createCell(7).setCellValue(String.valueOf(transaction.isVerificated()));
@@ -619,6 +643,7 @@ public class ListsPanel {
             row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
             row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
             row.createCell(12).setCellValue(String.valueOf(transaction.getCommittee()));
+            row.createCell(13).setCellValue(Transaction.getPersianType(transaction.getType()));
         }
         spreadsheet.setRightToLeft(true);
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
@@ -632,6 +657,104 @@ public class ListsPanel {
         SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Transactions.xlsx"));
         sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های ناقص (تراکنش‌های تایید نشده یا بدون فاکتور کاغذی)\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
         adminPanel.sendMessageToUser(sendDocument);
+    }
+
+    private void requestWantedCommiteeName(){
+        ArrayList<String> commiteesList = Loader.loadCommiteesList();
+        String messageText1 = "";
+        for (String commitee : commiteesList){
+            messageText1 += commitee + "\n";
+        }
+        SendMessage sendMessage1 = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText1);
+        adminPanel.sendMessageToUser(sendMessage1);
+        String messageText = "نام بخش مورد نظر را وارد کنید (با استفاده از لیست بالا):";
+        SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+        row.add("انصراف");
+        keyboard.add(row);
+        keyboardMarkup.setKeyboard(keyboard);
+        sendMessage.setReplyMarkup(keyboardMarkup);
+        estate = ListsPanelEstate.ADMIN_IS_ASKING_FOR_ONE_COMMITEE_TRANSACTIONS;
+        adminPanel.sendMessageToUser(sendMessage);
+    }
+
+    private void sendAllCpmmiteeTransactionsExcelFile(Update update) throws IOException {
+        if (update.getMessage().getText() != null){
+            if (update.getMessage().getText().equals("انصراف")) {
+                showListsPanel();
+                return;
+            }
+        }
+        String commiteeName = update.getMessage().getText();
+        try {
+            if (!Loader.loadCommiteesList().contains(commiteeName)){
+                throw new NullPointerException();
+            }
+        } catch (Exception e){
+            String messageText = "کمیته‌ای با این نام پیدا نشد، مجددا تلاش کنید.";
+            SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
+            estate = ListsPanelEstate.ADMIN_IS_ASKING_FOR_ONE_COMMITEE_TRANSACTIONS;
+            adminPanel.sendMessageToUser(sendMessage);
+            return;
+        }
+        ArrayList<Transaction> transactions = Loader.loadCommiteeTransactions(commiteeName, false);
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet spreadsheet = workbook.createSheet("تراکنش‌ها");
+
+        XSSFRow header = spreadsheet.createRow(0);
+        header.createCell(0).setCellValue("آیدی");
+        header.createCell(1).setCellValue("نام و نام خانوادگی کاربر");
+        header.createCell(2).setCellValue("نام‌ کاربری تلگرام کاربر");
+        header.createCell(3).setCellValue("مبلغ");
+        header.createCell(4).setCellValue("کارمزد");
+        header.createCell(5).setCellValue("تاریخ");
+        header.createCell(6).setCellValue("زمان");
+        header.createCell(7).setCellValue("وضعیت تایید");
+        header.createCell(8).setCellValue("دارای فاکتور کاغذی");
+        header.createCell(9).setCellValue("توضیحات کاربر");
+        header.createCell(10).setCellValue("توضیحات مدیر");
+        header.createCell(11).setCellValue("توضیحات داخلی مدیر");
+        header.createCell(12).setCellValue("بخش");
+        header.createCell(13).setCellValue("نوع");
+
+        for (int i = 1 ; i <= transactions.size() ; i++){
+            Transaction transaction = transactions.get(i-1);
+            XSSFRow row = spreadsheet.createRow(i);
+            row.createCell(0).setCellValue(String.valueOf(transaction.getId()));
+            if (transaction.getUser() != null){
+                row.createCell(1).setCellValue(transaction.getUser().getName());
+                row.createCell(2).setCellValue(transaction.getUser().getUsername());
+            } else {
+                row.createCell(1).setCellValue("ندارد");
+                row.createCell(2).setCellValue("ندارد");
+            }
+            row.createCell(3).setCellValue(transaction.getAmount());
+            row.createCell(4).setCellValue(transaction.getFee());
+            row.createCell(5).setCellValue(String.valueOf(transaction.getReadableDate()));
+            row.createCell(6).setCellValue(String.valueOf(transaction.getReadableTime()));
+            row.createCell(7).setCellValue(String.valueOf(transaction.isVerificated()));
+            row.createCell(8).setCellValue(String.valueOf(transaction.isHasPaperInvoice()));
+            row.createCell(9).setCellValue(String.valueOf(transaction.getDescription()));
+            row.createCell(10).setCellValue(String.valueOf(transaction.getAdminDescription()));
+            row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
+            row.createCell(12).setCellValue(String.valueOf(transaction.getCommittee()));
+            row.createCell(13).setCellValue(Transaction.getPersianType(transaction.getType()));
+        }
+        File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
+        if (!file.exists()){
+            file.createNewFile();
+        }
+        FileOutputStream out = new FileOutputStream(file);
+        workbook.write(out);
+        out.close();
+
+        SendDocument sendDocument = new SendDocument(String.valueOf(adminPanel.getChat().getChatID()), new InputFile(file, "Transactions.xlsx"));
+        sendDocument.setCaption("خروجی اکسل لیست تراکنش‌های انجام شده توسط خادم (تایید شده و تایید نشده)\nتصویر فاکتور هر تراکنش‌ را با استفاده از آیدی آن می‌توانید از ربات دریافت کنید.");
+        adminPanel.sendMessageToUser(sendDocument);
+        showListsPanel();
     }
 
     public AdminPanel getAdminPanelController() {
