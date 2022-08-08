@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -270,6 +271,18 @@ public class Loader extends IO{
             objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
             return objectMapper.readValue(new File("src/main/resources/Commitees.json"), ArrayList.class);
         } catch (IOException e){
+            return null;
+        }
+    }
+
+    public static HashMap<String, String> loadEstimationsMap() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+        try {
+            return objectMapper.readValue(new File(rootPath + "estimations.json"), HashMap.class);
+        } catch (IOException e) {
+            e.printStackTrace();
             return null;
         }
     }

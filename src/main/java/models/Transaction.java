@@ -23,6 +23,7 @@ public class Transaction {
     private boolean verificated;
     private boolean hasPaperInvoice;
     private boolean deleted;
+    private boolean completed;
 
     public Transaction(){}
 
@@ -44,6 +45,7 @@ public class Transaction {
         this.hasPaperInvoice = false;
         this.deleted = false;
         this.committee = null;
+        this.completed = false;
     }
 
     public int getId() {
@@ -174,6 +176,14 @@ public class Transaction {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
     @Override

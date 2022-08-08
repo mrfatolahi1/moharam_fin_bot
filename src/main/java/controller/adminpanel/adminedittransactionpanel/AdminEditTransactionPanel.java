@@ -505,7 +505,7 @@ public class AdminEditTransactionPanel {
         String messageText = "تراکنش با موفقیت حذف شد.";
         SendMessage sendMessage = new SendMessage(String.valueOf(adminPanel.getChat().getChatID()), messageText);
         adminPanel.sendMessageToUser(sendMessage);
-        showAdminEditTransactionPanel(cachedTransactionId);
+        showAdminPanel(update);
     }
 
     private void requestNewCommittee(){
