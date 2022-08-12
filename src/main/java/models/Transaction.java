@@ -241,9 +241,10 @@ public class Transaction {
 
     @JsonIgnore
     public String getReadableDate(){
-        return getPersianDate().getDay()
-                + " " + PersianDate.getMonthNameByItNumber(getPersianDate().getMonth())
-                + " " + getPersianDate().getYear();
+        return getPersianDate().getYear() + "/" + getPersianDate().getMonth() + "/" + getPersianDate().getDay();
+//        return getPersianDate().getDay()
+//                + " " + PersianDate.getMonthNameByItNumber(getPersianDate().getMonth())
+//                + " " + getPersianDate().getYear();
     }
 
 }

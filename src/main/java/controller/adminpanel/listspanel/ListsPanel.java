@@ -361,6 +361,7 @@ public class ListsPanel {
         header.createCell(11).setCellValue("توضیحات داخلی مدیر");
         header.createCell(12).setCellValue("بخش");
         header.createCell(13).setCellValue("نوع");
+        header.createCell(14).setCellValue("وضعیت ثبت در تنخواه");
 
         for (int i = 1 ; i <= transactions.size() ; i++){
             Transaction transaction = transactions.get(i-1);
@@ -384,6 +385,7 @@ public class ListsPanel {
             row.createCell(11).setCellValue(String.valueOf(transaction.getAdminInternalDescription()));
             row.createCell(12).setCellValue(String.valueOf(transaction.getCommittee()));
             row.createCell(13).setCellValue(Transaction.getPersianType(transaction.getType()));
+            row.createCell(14).setCellValue(transaction.isCompleted());
         }
         File file = new File("Excels/" + adminPanel.getChat().getUser().getId()+".xlsx");
         if (!file.exists()){

@@ -55,6 +55,7 @@ public class MainController extends TelegramLongPollingBot{
 //        if (update.getMessage().getText() == null || update.getMessage().getText() == ""){
 //            return;
 //        }
+        System.out.println("***************");
         (new Thread(() -> {
             long chatID = update.getMessage().getChatId();
             String username = update.getMessage().getFrom().getUserName();
