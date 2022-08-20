@@ -445,6 +445,13 @@ public class ListsPanel {
             return;
         }
         ArrayList<Transaction> transactions = Loader.loadUserTransactions(user, false);
+//        ArrayList<Transaction> transactions = new ArrayList<>();
+//
+//        for (Transaction transaction : transactions1){
+//            if (transaction.getType() == TransactionType.GIVE_TO_USERS){
+//                transactions.add(transaction);
+//            }
+//        }
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet spreadsheet = workbook.createSheet("تراکنش‌ها");
